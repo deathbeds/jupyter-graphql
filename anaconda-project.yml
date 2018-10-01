@@ -1,0 +1,41 @@
+name: jupyter-graphql-dev
+
+commands:
+  lab:
+    unix: jupyter lab --no-browser --debug
+  postBuild:
+    unix: bash postBuild
+  setup:
+    unix: pip install -e . --ignore-installed --no-deps
+  black:
+    unix: black src/py setup.py
+
+env_specs:
+  default:
+    platforms:
+    - linux-64
+    - osx-64
+    - win-64
+    inherit_from:
+    - jupyter-graphql-dev
+    packages:
+      - black
+      - flake8
+      - beautysh
+  jupyter-graphql-dev:
+    packages:
+    - jupyterlab >=0.34,<0.35
+    - nodejs
+    - pip
+    - python >=3.6,<3.7
+    - werkzeug
+    - rx
+    - promise
+    - aniso8601
+    - pip:
+      - graphene
+      - graphql-core
+      - graphql-relay
+    channels:
+    - conda-forge
+    - defaults

@@ -1,0 +1,19 @@
+name: jupyter-graphql-dev
+
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  - jupyterlab >=0.34,<0.35
+  - nodejs
+  - pip
+  - python >=3.6,<3.7
+  - werkzeug
+  - rx
+  - promise
+  - aniso8601
+  - pip:
+    - graphene
+    - graphql-core
+    - graphql-relay
