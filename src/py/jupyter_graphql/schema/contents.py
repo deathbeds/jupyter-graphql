@@ -1,13 +1,4 @@
-from graphene import (
-    Boolean,
-    Enum,
-    Field,
-    Interface,
-    ObjectType,
-    relay,
-    String,
-    Union,
-)
+from graphene import Boolean, Enum, Field, Interface, ObjectType, relay, String, Union
 from graphene.types.datetime import DateTime
 
 
@@ -20,16 +11,19 @@ class ContentType(Enum):
 
 
 def contents_to_node(contents):
-    icontents = {k: contents.get(k, None) for k in [
-        "path",
-        "name",
-        "mimetype",
-        "type",
-        "writeable",
-        "created",
-        "last_modified",
-        "format",
-    ]}
+    icontents = {
+        k: contents.get(k, None)
+        for k in [
+            "path",
+            "name",
+            "mimetype",
+            "type",
+            "writeable",
+            "created",
+            "last_modified",
+            "format",
+        ]
+    }
 
     content_type = icontents["type"]
 
@@ -55,35 +49,22 @@ class IContents(Interface):
 
 class DirectoryContents(ObjectType):
     class Meta:
-        interfaces = (
-            IContents,
-            relay.Node,
-        )
+        interfaces = (IContents, relay.Node)
 
 
 class NotebookContents(ObjectType):
     class Meta:
-        interfaces = (
-            IContents,
-            relay.Node,
-        )
+        interfaces = (IContents, relay.Node)
 
 
 class FileContents(ObjectType):
     class Meta:
-        interfaces = (
-            IContents,
-            relay.Node,
-        )
+        interfaces = (IContents, relay.Node)
 
 
 class Contents(Union):
     class Meta:
-        types = (
-            DirectoryContents,
-            NotebookContents,
-            FileContents,
-        )
+        types = (DirectoryContents, NotebookContents, FileContents)
 
 
 class Query(ObjectType):

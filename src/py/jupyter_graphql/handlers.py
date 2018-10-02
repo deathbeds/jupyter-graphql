@@ -56,7 +56,7 @@ class GraphQLHandler(IPythonHandler):
         graphiql=False,
         pretty=False,
         batch=False,
-        nb_app=None
+        nb_app=None,
     ):
         super(GraphQLHandler, self).initialize()
         self.schema = schema

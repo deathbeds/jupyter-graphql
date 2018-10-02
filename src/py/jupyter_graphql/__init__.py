@@ -31,14 +31,16 @@ def load_jupyter_server_extension(app):
     web_app.add_handlers(
         ".*$",
         [
-            (base(), GraphQLHandler, dict(
-                schema=schema,
-                graphiql=True,
-                nb_app=app,
-                middleware=[
-                    app_middleware,
-                ]
-            )),
+            (
+                base(),
+                GraphQLHandler,
+                dict(
+                    schema=schema,
+                    graphiql=True,
+                    nb_app=app,
+                    middleware=[app_middleware],
+                ),
+            ),
             # serve the graphiql assets
             (base("static", "(.*)"), FileFindHandler, dict(path=[STATIC])),
         ],

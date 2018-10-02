@@ -11,11 +11,8 @@ _scripts/
 *.html
 *.log
 *.tar.gz
-demo/
 envs/
-htpasswd
 lib/
 node_modules/
 Untitled*.ipynb
-.projectignore
 static/
