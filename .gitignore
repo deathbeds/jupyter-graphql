@@ -18,3 +18,4 @@ lib/
 node_modules/
 Untitled*.ipynb
 .projectignore
+static/

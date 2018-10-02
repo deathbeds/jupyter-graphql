@@ -9,6 +9,8 @@ commands:
     unix: pip install -e . --ignore-installed --no-deps
   black:
     unix: black src/py setup.py
+  atom:
+    unix: atom .
 
 env_specs:
   default:

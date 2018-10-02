@@ -1,27 +1,28 @@
 from __future__ import absolute_import, division, print_function
 
 import inspect
-import json
 import sys
 import traceback
+import json
 
-from notebook.base.handlers import IPythonHandler
-
-import six
-from graphql import parse, validate, Source, get_operation_ast, execute
-from graphql.error import GraphQLError
-from graphql.error import format_error as format_graphql_error
-from graphql.execution import ExecutionResult
 from tornado import web
-from tornado.escape import json_encode
+from tornado.escape import json_encode, json_decode
 from tornado.gen import coroutine, Return
 from tornado.locks import Event
 from tornado.log import app_log
 from tornado.web import HTTPError
+
 from werkzeug.datastructures import MIMEAccept
 from werkzeug.http import parse_accept_header
 
-from ..executor import TornadoExecutor
+from graphql import parse, validate, Source, get_operation_ast, execute
+from graphql.error import GraphQLError
+from graphql.error import format_error as format_graphql_error
+from graphql.execution import ExecutionResult
+
+from notebook.base.handlers import IPythonHandler
+
+from .executor import TornadoExecutor
 
 
 class ExecutionError(Exception):
@@ -31,7 +32,7 @@ class ExecutionError(Exception):
             self.errors = []
         else:
             self.errors = [str(e) for e in errors]
-        self.message = '\n'.join(self.errors)
+        self.message = "\n".join(self.errors)
 
 
 class GraphQLHandler(IPythonHandler):
@@ -46,8 +47,17 @@ class GraphQLHandler(IPythonHandler):
     graphiql_template = None
     graphiql_html_title = None
 
-    def initialize(self, schema=None, executor=None, middleware=None, root_value=None, graphiql=False, pretty=False,
-                 batch=False):
+    def initialize(
+        self,
+        schema=None,
+        executor=None,
+        middleware=None,
+        root_value=None,
+        graphiql=False,
+        pretty=False,
+        batch=False,
+        nb_app=None
+    ):
         super(GraphQLHandler, self).initialize()
         self.schema = schema
         if middleware is not None:
@@ -57,6 +67,7 @@ class GraphQLHandler(IPythonHandler):
         self.pretty = pretty
         self.graphiql = graphiql
         self.batch = batch
+        self.nb_app = nb_app
 
     def check_xsrf_cookie(self, *args, **kwargs):
         return True
@@ -64,14 +75,14 @@ class GraphQLHandler(IPythonHandler):
     @coroutine
     def get(self):
         try:
-            yield self.run('get')
+            yield self.run("get")
         except Exception as ex:
             self.handle_error(ex)
 
     @coroutine
     def post(self):
         try:
-            yield self.run('post')
+            yield self.run("post")
         except Exception as ex:
             self.handle_error(ex)
 
@@ -85,13 +96,16 @@ class GraphQLHandler(IPythonHandler):
             for entry in data:
                 r = yield self.get_response(entry, method, entry)
                 responses.append(r)
-            result = '[{}]'.format(','.join([response[0] for response in responses]))
+            result = "[{}]".format(",".join([response[0] for response in responses]))
+            print(data, responses)
             status_code = max(responses, key=lambda response: response[1])[1]
         else:
             result, status_code = yield self.get_response(data, method, show_graphiql)
 
         if show_graphiql:
-            query, variables, operation_name, id = self.get_graphql_params(self.request, data)
+            query, variables, operation_name, id = self.get_graphql_params(
+                self.request, data
+            )
             self.finish(
                 self.render_template(
                     "graphiql.html", base_url=self.application.settings["base_url"]
@@ -100,17 +114,17 @@ class GraphQLHandler(IPythonHandler):
             return
 
         self.set_status(status_code)
-        self.set_header('Content-Type', 'application/json')
+        self.set_header("Content-Type", "application/json")
         self.write(result)
         self.finish()
 
     def parse_body(self):
         content_type = self.content_type
 
-        if content_type == 'application/graphql':
-            return {'query': self.request.body}
+        if content_type == "application/graphql":
+            return {"query": self.request.body}
 
-        elif content_type == 'application/json':
+        elif content_type == "application/json":
             # noinspection PyBroadException
             try:
                 body = self.request.body
@@ -118,65 +132,74 @@ class GraphQLHandler(IPythonHandler):
                 raise ExecutionError(400, e)
 
             try:
-                request_json = json.loads(body)
+                request_json = json_decode(body)
                 if self.batch:
                     assert isinstance(request_json, list), (
-                        'Batch requests should receive a list, but received {}.'
+                        "Batch requests should receive a list, but received {}."
                     ).format(repr(request_json))
-                    assert len(request_json) > 0, (
-                        'Received an empty list in the batch request.'
-                    )
+                    assert (
+                        len(request_json) > 0
+                    ), "Received an empty list in the batch request."
                 else:
-                    assert isinstance(request_json, dict), (
-                        'The received data is not a valid JSON query.'
-                    )
+                    assert isinstance(
+                        request_json, dict
+                    ), "The received data is not a valid JSON query."
                 return request_json
             except AssertionError as e:
                 raise HTTPError(status_code=400, log_message=str(e))
             except (TypeError, ValueError):
-                raise HTTPError(status_code=400, log_message='POST body sent invalid JSON.')
+                raise HTTPError(
+                    status_code=400, log_message="POST body sent invalid JSON."
+                )
 
-        elif content_type in ['application/x-www-form-urlencoded', 'multipart/form-data']:
+        elif content_type in [
+            "application/x-www-form-urlencoded",
+            "multipart/form-data",
+        ]:
             return self.request.query_arguments
 
         return {}
 
     @coroutine
     def get_response(self, data, method, show_graphiql=False):
-        query, variables, operation_name, id = self.get_graphql_params(self.request, data)
+        query, variables, operation_name, id = self.get_graphql_params(
+            self.request, data
+        )
 
         execution_result = yield self.execute_graphql_request(
-            method,
-            query,
-            variables,
-            operation_name,
-            show_graphiql
+            method, query, variables, operation_name, show_graphiql
         )
 
         status_code = 200
+
         if execution_result:
             response = {}
 
-            if getattr(execution_result, 'is_pending', False):
+            if getattr(execution_result, "is_pending", False):
                 event = Event()
-                on_resolve = lambda *_: event.set()
+
+                def on_resolve(*args):
+                    return event.set()
+
                 execution_result.then(on_resolve).catch(on_resolve)
                 yield event.wait()
 
-            if hasattr(execution_result, 'get'):
+            if hasattr(execution_result, "get"):
                 execution_result = execution_result.get()
 
             if execution_result.errors:
-                response['errors'] = [self.format_error(e) for e in execution_result.errors]
+                response["errors"] = [
+                    self.format_error(e) for e in execution_result.errors
+                ]
 
             if execution_result.invalid:
                 status_code = 400
             else:
-                response['data'] = execution_result.data
+                response["data"] = execution_result.data
 
             if self.batch:
-                response['id'] = id
-                response['status'] = status_code
+                response["id"] = id
+                response["status"] = status_code
 
             result = self.json_encode(response, pretty=self.pretty or show_graphiql)
         else:
@@ -185,13 +208,15 @@ class GraphQLHandler(IPythonHandler):
         raise Return((result, status_code))
 
     @coroutine
-    def execute_graphql_request(self, method, query, variables, operation_name, show_graphiql=False):
+    def execute_graphql_request(
+        self, method, query, variables, operation_name, show_graphiql=False
+    ):
         if not query:
             if show_graphiql:
                 raise Return(None)
-            raise HTTPError(400, 'Must provide query string.')
+            raise HTTPError(400, "Must provide query string.")
 
-        source = Source(query, name='GraphQL request')
+        source = Source(query, name="GraphQL request")
 
         try:
             document_ast = parse(source)
@@ -200,18 +225,20 @@ class GraphQLHandler(IPythonHandler):
             raise Return(ExecutionResult(errors=[e], invalid=True))
 
         if validation_errors:
-            raise Return(ExecutionResult(
-                errors=validation_errors,
-                invalid=True,
-            ))
+            raise Return(ExecutionResult(errors=validation_errors, invalid=True))
 
-        if method.lower() == 'get':
+        if method.lower() == "get":
             operation_ast = get_operation_ast(document_ast, operation_name)
-            if operation_ast and operation_ast.operation != 'query':
+            if operation_ast and operation_ast.operation != "query":
                 if show_graphiql:
                     raise Return(None)
 
-                raise HTTPError(405, 'Can only perform a {} operation from a POST request.'.format(operation_ast.operation))
+                raise HTTPError(
+                    405,
+                    "Can only perform a {} operation from a POST request.".format(
+                        operation_ast.operation
+                    ),
+                )
 
         try:
             result = yield self.execute(
@@ -222,7 +249,7 @@ class GraphQLHandler(IPythonHandler):
                 context_value=self.request,
                 middleware=self.middleware,
                 executor=self.executor or TornadoExecutor(),
-                return_promise=True
+                return_promise=True,
             )
         except Exception as e:
             raise Return(ExecutionResult(errors=[e], invalid=True))
@@ -234,39 +261,30 @@ class GraphQLHandler(IPythonHandler):
         raise Return(execute(self.schema, *args, **kwargs))
 
     def json_encode(self, d, pretty=False):
-        if pretty or self.get_query_argument('pretty', False):
-            return json.dumps(d, sort_keys=True, indent=2, separators=(',', ': '))
+        if pretty or self.get_query_argument("pretty", False):
+            return json.dumps(d, sort_keys=True, indent=2, separators=(",", ": "))
 
-        return json.dumps(d, separators=(',', ':'))
-
-    def render_graphiql(self, query, variables, operation_name, result):
-        return render_graphiql(
-            query=query,
-            variables=variables,
-            operation_name=operation_name,
-            result=result,
-            graphiql_version=self.graphiql_version,
-            graphiql_template=self.graphiql_template,
-            graphiql_html_title=self.graphiql_html_title,
-        )
+        return json.dumps(d, separators=(",", ":"))
 
     def should_display_graphiql(self):
-        raw = 'raw' in self.request.query_arguments.keys() or 'raw' in self.request.arguments
+        raw = (
+            "raw" in self.request.query_arguments.keys()
+            or "raw" in self.request.arguments
+        )
         return not raw and self.request_wants_html()
 
     def request_wants_html(self):
-        accept_header = self.request.headers.get('Accept', '')
+        accept_header = self.request.headers.get("Accept", "")
         accept_mimetypes = parse_accept_header(accept_header, MIMEAccept)
-        best = accept_mimetypes.best_match(['application/json', 'text/html'])
-        return best == 'text/html' and accept_mimetypes[best] > accept_mimetypes['application/json']
+        best = accept_mimetypes.best_match(["application/json", "text/html"])
+        return (
+            best == "text/html"
+            and accept_mimetypes[best] > accept_mimetypes["application/json"]
+        )
 
     @property
     def content_type(self):
-        return self.request.headers.get('Content-Type', 'text/plain').split(';')[0]
-
-    @property
-    def context(self):
-        return None
+        return self.request.headers.get("Content-Type", "text/plain").split(";")[0]
 
     @staticmethod
     def instantiate_middleware(middlewares):
@@ -282,17 +300,17 @@ class GraphQLHandler(IPythonHandler):
         for key in request.arguments.keys():
             single_args[key] = request.arguments.get(key)[0]
 
-        query = single_args.get('query') or data.get('query')
-        variables = single_args.get('variables') or data.get('variables')
-        id = single_args.get('id') or data.get('id')
+        query = single_args.get("query") or data.get("query")
+        variables = single_args.get("variables") or data.get("variables")
+        id = single_args.get("id") or data.get("id")
 
-        if variables and isinstance(variables, basestring):
+        if variables and isinstance(variables, str):
             try:
-                variables = json.loads(variables)
-            except:
-                raise HTTPError(400, 'Variables are invalid JSON.')
+                variables = json_decode(variables)
+            except Exception:
+                raise HTTPError(400, "Variables are invalid JSON.")
 
-        operation_name = single_args.get('operationName') or data.get('operationName')
+        operation_name = single_args.get("operationName") or data.get("operationName")
         if operation_name == "null":
             operation_name = None
 
@@ -300,11 +318,11 @@ class GraphQLHandler(IPythonHandler):
 
     def handle_error(self, ex):
         if not isinstance(ex, (web.HTTPError, ExecutionError, GraphQLError)):
-            tb = ''.join(traceback.format_exception(*sys.exc_info()))
-            app_log.error('Error: {0} {1}'.format(ex, tb))
+            tb = "".join(traceback.format_exception(*sys.exc_info()))
+            app_log.error("Error: {0} {1}".format(ex, tb))
         self.set_status(self.error_status(ex))
-        error_json = json_encode({'errors': self.error_format(ex)})
-        app_log.debug('error_json: %s', error_json)
+        error_json = json_encode({"errors": self.error_format(ex)})
+        app_log.debug("error_json: %s", error_json)
         self.write(error_json)
 
     @staticmethod
@@ -319,17 +337,17 @@ class GraphQLHandler(IPythonHandler):
     @staticmethod
     def error_format(exception):
         if isinstance(exception, ExecutionError):
-            return [{'message': e} for e in exception.errors]
+            return [{"message": e} for e in exception.errors]
         elif isinstance(exception, GraphQLError):
             return [format_graphql_error(exception)]
         elif isinstance(exception, web.HTTPError):
-            return [{'message': exception.log_message}]
+            return [{"message": exception.log_message}]
         else:
-            return [{'message': 'Unknown server error'}]
+            return [{"message": "Unknown server error"}]
 
     @staticmethod
     def format_error(error):
         if isinstance(error, GraphQLError):
             return format_graphql_error(error)
 
-        return {'message': six.text_type(error)}
+        return {"message": str(error)}
