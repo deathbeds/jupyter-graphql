@@ -72,6 +72,7 @@ class GraphQLHandler(IPythonHandler):
     def check_xsrf_cookie(self, *args, **kwargs):
         return True
 
+    @web.authenticated
     @coroutine
     def get(self):
         try:
@@ -79,11 +80,13 @@ class GraphQLHandler(IPythonHandler):
         except Exception as ex:
             self.handle_error(ex)
 
+    @web.authenticated
     @coroutine
     def post(self):
         try:
             yield self.run("post")
         except Exception as ex:
+            self.log.error("[graphql] ERR: %s", ex)
             self.handle_error(ex)
 
     @coroutine
@@ -327,6 +330,7 @@ class GraphQLHandler(IPythonHandler):
 
     @staticmethod
     def error_status(exception):
+        app_log.error(exception)
         if isinstance(exception, web.HTTPError):
             return exception.status_code
         elif isinstance(exception, (ExecutionError, GraphQLError)):

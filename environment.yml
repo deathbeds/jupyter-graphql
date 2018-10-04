@@ -5,15 +5,17 @@ channels:
   - defaults
 
 dependencies:
+  - aniso8601
   - jupyterlab >=0.34,<0.35
   - nodejs
   - pip
-  - python >=3.6,<3.7
-  - werkzeug
-  - rx
   - promise
-  - aniso8601
+  - python >=3.6,<3.7
+  - requests
+  - rx
+  - werkzeug
   - pip:
     - graphene
     - graphql-core
     - graphql-relay
+    - gql
