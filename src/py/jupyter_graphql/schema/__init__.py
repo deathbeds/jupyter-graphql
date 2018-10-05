@@ -7,4 +7,4 @@ class Query(contents.Query, ObjectType):
     node = relay.Node.Field()
 
 
-schema = Schema(query=Query)
+schema = Schema(query=Query, auto_camelcase=False)

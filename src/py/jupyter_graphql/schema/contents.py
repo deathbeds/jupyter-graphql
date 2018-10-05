@@ -11,15 +11,14 @@ from graphene import (
 )
 from graphene.types.datetime import DateTime
 
-from .nbformat import NBFormat, content_to_nbnode
+from .nbformat.notebook import Notebook, content_to_notebook
 
 
 class ContentType(Enum):
     # {None, 'directory', 'file', 'notebook'}:
-    NONE = None
-    DIRECTORY = "directory"
-    FILE = "file"
-    NOTEBOOK = "notebook"
+    directory = "directory"
+    file = "file"
+    notebook = "notebook"
 
 
 def contents_to_node(contents):
@@ -60,7 +59,6 @@ class IContents(Interface):
     created = DateTime()
     last_modified = DateTime()
     format = String()
-    # content = String()
 
 
 class IFileContents(Interface):
@@ -83,14 +81,14 @@ class NotebookContents(ObjectType):
     class Meta:
         interfaces = (IFileContents, IContents, relay.Node)
 
-    content = Field(NBFormat)
+    content = Field(Notebook)
 
     def resolve_content(self, info):
         content = self.content
         if content is None:
             cm = info.context._app.contents_manager
             content = cm.get(self.path)["content"]
-        return content_to_nbnode(content)
+        return content_to_notebook(content)
 
 
 class FileContents(ObjectType):
