@@ -1,10 +1,10 @@
-from graphene import ObjectType, Schema, relay
+import graphene as G
 
 from . import contents
 
 
-class Query(contents.Query, ObjectType):
-    node = relay.Node.Field()
+class Query(contents.Query, G.ObjectType):
+    node = G.relay.Node.Field()
 
 
-schema = Schema(query=Query, auto_camelcase=False)
+schema = G.Schema(query=Query, auto_camelcase=False, types=contents.__types__)
