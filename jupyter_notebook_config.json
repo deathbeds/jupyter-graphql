@@ -1,6 +1,5 @@
 {
   "NotebookApp": {
-    "base_url": "/test/",
     "nbserver_extensions": {
       "jupyter_graphql": true
     }

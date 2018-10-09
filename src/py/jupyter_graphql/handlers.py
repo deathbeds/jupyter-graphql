@@ -1,3 +1,7 @@
+"""
+Forked from:
+https://github.com/dronedeploy/graphene-tornado/blob/master/graphene_tornado/tornado_graphql_handler.py
+"""
 from __future__ import absolute_import, division, print_function
 
 import inspect

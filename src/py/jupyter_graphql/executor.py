@@ -1,3 +1,7 @@
+"""
+Copied from:
+https://github.com/dronedeploy/graphene-tornado/blob/master/graphene_tornado/tornado_executor.py
+"""
 from promise import Promise
 from tornado.gen import convert_yielded, multi_future
 from tornado.ioloop import IOLoop

@@ -15,4 +15,5 @@ else
 fi
 
 set -ex
-jlpm bootstrap
+python -m pip install -e . --ignore-installed --no-deps
+python -m jupyter_graphql.fetch_static
