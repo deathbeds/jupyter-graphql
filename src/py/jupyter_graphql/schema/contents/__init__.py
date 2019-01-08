@@ -1,3 +1,6 @@
+from asyncio import Queue
+
+from tornado import ioloop
 import graphene as G
 import graphene.relay as R
 
@@ -74,6 +77,31 @@ class Query(G.ObjectType):
 
     def resolve_contents(self, info, path=""):
         return CM(info).get(path)
+
+
+class Subscription(G.ObjectType):
+    contents = G.Field(Contents, path=G.String())
+
+    async def resolve_contents(self, info, path=""):
+        queue = Queue()
+        await queue.put(CM(info).get(path))
+
+        _old_hook = CM(info).post_save_hook
+
+        async def put(model):
+            await queue.put(model)
+
+        def hook(os_path, model, contents_manager):
+            if path == model["path"]:
+                ioloop.IOLoop.current().spawn_callback(put, model)
+
+            if _old_hook:
+                _old_hook(os_path, model, contents_manager)
+
+        CM(info).post_save_hook = hook
+
+        while True:
+            yield await queue.get()
 
 
 __types__ = [NotebookContents, FileContents, DirectoryContents] + notebook.__types__

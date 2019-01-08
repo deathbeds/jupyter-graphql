@@ -5,11 +5,9 @@ _scripts/
 *_files/
 *.bundle.*
 *.egg-info/
-*.html
 *.log
 *.tar.gz
 envs/
 lib/
 Untitled*.ipynb
 static/
-anaconda-project.yml

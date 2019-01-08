@@ -1,11 +1,10 @@
 from pathlib import Path
 from notebook.base.handlers import FileFindHandler
 
-
 from notebook.utils import url_path_join as ujoin
 
-from .handlers import GraphQLHandler
-
+from .subscriptions import TornadoSubscriptionServer
+from .handlers import GraphQLHandler, SubscriptionHandler
 from .schema import schema
 
 
@@ -17,6 +16,8 @@ STATIC = HERE / "static"
 def load_jupyter_server_extension(app):
     app.log.info("[graphql] initializing")
     web_app = app.web_app
+
+    subscription_server = TornadoSubscriptionServer(schema)
 
     # add our templates
     web_app.settings["jinja2_env"].loader.searchpath += [TEMPLATES]
@@ -34,12 +35,12 @@ def load_jupyter_server_extension(app):
             (
                 base(),
                 GraphQLHandler,
-                dict(
-                    schema=schema,
-                    graphiql=True,
-                    nb_app=app,
-                    middleware=[app_middleware],
-                ),
+                dict(schema=schema, graphiql=True, middleware=[app_middleware]),
+            ),
+            (
+                base("subscriptions"),
+                SubscriptionHandler,
+                dict(subscription_server=subscription_server, app=app),
             ),
             # serve the graphiql assets
             (base("static", "(.*)"), FileFindHandler, dict(path=[STATIC])),

@@ -1,5 +1,6 @@
 def CM(info):
-    return info.context._app.contents_manager
+    app = info.context["_app"] if isinstance(info.context, dict) else info.context._app
+    return app.contents_manager
 
 
 def RESOLVE_CONTENT(it, info):

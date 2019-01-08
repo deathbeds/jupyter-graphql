@@ -1,0 +1,41 @@
+name: jupyter-graphql-dev
+
+commands:
+  lab:
+    unix: jupyter lab --no-browser --debug
+  setup:
+    unix: pip install -e . --ignore-installed --no-deps
+  black:
+    unix: black src/py setup.py
+  atom:
+    unix: atom .
+  static:
+    unix: python -m jupyter_graphql.fetch_static
+
+env_specs:
+  default:
+    platforms:
+    - linux-64
+    - osx-64
+    - win-64
+    inherit_from:
+    - jupyter-graphql-dev
+    packages:
+    - black
+    - flake8
+    - beautysh
+  jupyter-graphql-dev:
+    packages:
+    - gql
+    - graphene
+    - iso8601
+    - jupyterlab >=0.35,<0.36
+    - python >=3.6,<3.7
+    - requests
+    - werkzeug
+    - pip:
+      - graphql-ws
+      - graphene-tornado
+    channels:
+    - conda-forge
+    - defaults
