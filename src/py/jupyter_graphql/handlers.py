@@ -5,13 +5,7 @@ from notebook.base.handlers import IPythonHandler
 from tornado import websocket, ioloop
 
 from graphene_tornado.tornado_graphql_handler import TornadoGraphQLHandler
-from graphene_tornado import render_graphiql
 from graphql_ws.constants import GRAPHQL_WS
-
-from pathlib import Path
-
-here = Path(__file__).parent
-render_graphiql.TEMPLATE = (here / "templates" / "graphiql.html").read_text()
 
 
 class GraphQLHandler(TornadoGraphQLHandler, IPythonHandler):
@@ -26,9 +20,8 @@ class GraphQLHandler(TornadoGraphQLHandler, IPythonHandler):
 
 # TODO: use notebook websocket stuff
 class SubscriptionHandler(websocket.WebSocketHandler):
-    def initialize(self, app, subscription_server):
-        self.app = app
-        self.subscription_server = subscription_server
+    def initialize(self, graphql_manager):
+        self.graphql_manager = graphql_manager
         self.queue = Queue(100)
 
     def select_subprotocol(self, subprotocols):
@@ -36,8 +29,8 @@ class SubscriptionHandler(websocket.WebSocketHandler):
 
     def open(self):
         async def handler():
-            await self.subscription_server.handle(
-                self, request_context=dict(_app=self.app)
+            await self.graphql_manager.subscription_server.handle(
+                self, request_context=dict(_app=self.graphql_manager.parent)
             )
 
         ioloop.IOLoop.current().spawn_callback(handler)

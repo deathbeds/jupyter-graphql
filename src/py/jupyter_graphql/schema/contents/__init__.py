@@ -105,3 +105,7 @@ class Subscription(G.ObjectType):
 
 
 __types__ = [NotebookContents, FileContents, DirectoryContents] + notebook.__types__
+
+
+def load_jupyter_graphql(register):
+    register(query=Query, subscription=Subscription, types=__types__)
