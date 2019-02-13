@@ -42,6 +42,10 @@ class RawCellJupyterMetaData(G.ObjectType):
         interfaces = (HideableSource,)
 
 
+class MarkdownCellJupyterMetaData(G.ObjectType):
+    class Meta:
+        interfaces = (HideableSource,)
+
 # Cell Metadata
 
 
@@ -53,25 +57,29 @@ class CodeCellMetaData(G.ObjectType):
     scrolled = G.Boolean()
     jupyter = G.Field(CodeCellJupyterMetaData)
 
+    def resolve_jupyter(it, info):
+        return it.get("jupyter", {})
+
 
 class RawCellMetaData(G.ObjectType):
     class Meta:
         interfaces = (CellMetaData,)
 
     format = G.String()
-    metadata = G.Field(RawCellJupyterMetaData)
+    jupyter = G.Field(RawCellJupyterMetaData)
 
-
-class MarkdownCellJupyterMetaData(G.ObjectType):
-    class Meta:
-        interfaces = (HideableSource,)
+    def resolve_jupyter(it, info):
+        return it.get("jupyter", {})
 
 
 class MarkdownCellMetaData(G.ObjectType):
     class Meta:
         interfaces = (CellMetaData,)
 
-    metadata = G.Field(MarkdownCellJupyterMetaData)
+    jupyter = G.Field(MarkdownCellJupyterMetaData)
+
+    def resolve_jupyter(it, info):
+        return it.get("jupyter", {})
 
 
 class Media(G.ObjectType):
