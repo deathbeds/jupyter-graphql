@@ -1,6 +1,12 @@
 import graphene as G
 
-from ..entry_points import load_cell_metadata_bases
+from ..utils import load_bases
+
+
+CELL_METADATA_ENTRY_POINT = "jupyter_graphql_schema.CellMetaData"
+
+
+load_cell_metadata_bases = load_bases(CELL_METADATA_ENTRY_POINT)
 
 
 class CellMetaData(*load_cell_metadata_bases(), G.Interface):

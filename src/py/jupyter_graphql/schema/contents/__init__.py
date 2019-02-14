@@ -6,9 +6,10 @@ import graphene.relay as R
 
 from graphene.types.datetime import DateTime
 
-from .nbformat import notebook
+from ..nbformat import notebook
+from ..utils import GET
 
-from .base import GET, RESOLVE_CONTENT, CM
+from .base import RESOLVE_CONTENT, CM
 
 
 class ContentType(G.Enum):

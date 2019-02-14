@@ -1,5 +1,5 @@
 import graphene as G
-from ..base import IDENTITY
+from ..utils import IDENTITY
 
 
 class NBFormat(G.Interface):
