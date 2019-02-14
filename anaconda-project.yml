@@ -1,12 +1,15 @@
 name: jupyter-graphql-dev
 
+variables:
+  PY_SRC: src/py setup.py
+
 commands:
   lab:
     unix: jupyter lab --no-browser --debug
   setup:
     unix: pip install -e . --ignore-installed --no-deps
-  black:
-    unix: black src/py setup.py
+  lint:
+    unix: isort -r $PY_SRC && black $PY_SRC
   atom:
     unix: atom .
   static:
@@ -24,6 +27,7 @@ env_specs:
     - black
     - flake8
     - beautysh
+    - isort
   jupyter-graphql-dev:
     packages:
     - gql
