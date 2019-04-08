@@ -1,0 +1,9 @@
+{
+  "packages": [
+    "packages/*"
+  ],
+  "version": "independent",
+  "npmClient": "jlpm",
+  "registry": "https://registry.npmjs.org/",
+  "useWorkspaces": true
+}

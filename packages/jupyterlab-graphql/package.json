@@ -1,0 +1,55 @@
+{
+  "author": "Dead Pixels Collective",
+  "bugs": {
+    "url": "https://github.com/deathbeds/jupyter-graphql/issues"
+  },
+  "description": "GraphQL Syntax Highlighting and Exploration for JupyterLab",
+  "dependencies": {
+    "codemirror-graphql": "^0.8.3",
+    "graphql": "*"
+  },
+  "devDependencies": {
+    "@jupyterlab/application": "^0.19.1",
+    "@jupyterlab/docregistry": "^0.19.1",
+    "@types/codemirror": "^0.0.71",
+    "@types/graphql": "14.2.0",
+    "codemirror": "~5.39.0",
+    "@types/node": "^9.4.2",
+    "@types/webpack-env": "~1.13.6",
+    "@jupyterlab/rendermime-interfaces": "^1.2.1"
+  },
+  "files": [
+    "{lib,style}/**/*.{css,d.ts,eot,gif,html,jpg,js,js.map,json,png,svg,woff2,ttf}"
+  ],
+  "jupyterlab": {
+    "extension": "lib/plugin.js"
+  },
+  "license": "BSD-3-Clause",
+  "keywords": [
+    "jupyter",
+    "jupyterlab",
+    "jupyterlab-extension",
+    "codemirror",
+    "graphql"
+  ],
+  "main": "lib/index.js",
+  "name": "@deathbeds/jupyterlab-graphql",
+  "peerDependencies": {
+    "@jupyterlab/application": "^0.19.1",
+    "@jupyterlab/docregistry": "^0.19.1",
+    "codemirror": "~5.39.0",
+    "@jupyterlab/rendermime-interfaces": "^1.2.1"
+  },
+
+  "homepage": "https://github.com/deathbeds/jupyter-graphql",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/deathbeds/jupyter-graphql.git"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w"
+  },
+  "types": "lib/index.d.ts",
+  "version": "0.1.0"
+}

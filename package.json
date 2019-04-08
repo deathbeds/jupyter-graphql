@@ -1,0 +1,18 @@
+{
+  "name": "jupyter-graphql",
+  "private": true,
+  "version": "2019.03",
+  "devDependencies": {
+    "lerna": "^3.13.1",
+    "typescript": "^3.4",
+    "prettier": "1.16.4"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "bootstrap": "jlpm --no-optional && jlpm lerna bootstrap && jlpm build",
+    "build": "lerna run build --stream",
+    "prettier": "prettier --write *.json *.md *.yml && lerna exec --stream -- prettier --write --config=../../.prettierrc ./src/**/*.ts ./style/**/*.css ./*.json ./*.md"
+  }
+}

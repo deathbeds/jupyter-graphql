@@ -1,0 +1,107 @@
+:root {
+  --jpgql-icon-open-in-new: url(./icons/open-in-new.svg);
+  --jpgql-icon-graphql: url(./icons/graphql.svg)
+}
+
+.jp-GraphQLIcon {
+  background-image: var(--jpgql-icon-graphql);
+  background-repeat: no-repeat;
+}
+
+.jp-GraphQL {
+  color: var(--jp-ui-font-color1);
+  font-size: var(--jp-ui-font-size1);
+  display: flex;
+  flex-direction: column;
+}
+
+.jp-GraphQL-Body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.jp-GraphQL-Body header {
+  flex-grow: 0;
+  display: flex;
+  flex-direction: row;
+}
+
+.jp-GraphQL-Body > header label {
+  flex: 1;
+  display: flex;
+  padding: calc(var(--jp-ui-font-size1) / 2);
+}
+
+.jp-GraphQL-Body > header label span {
+  flex-grow: 0;
+  padding-right: calc(var(--jp-ui-font-size1) / 2);
+  position: absolute;
+  z-index: -1;
+}
+
+.jp-Toolbar > .jp-Toolbar-item.jp-GraphQL-URL {
+  flex: 1;
+  display: flex;
+}
+
+.jp-GraphQL-URL label {
+  display: flex;
+  flex: 1;
+}
+
+.jp-GraphQL-Body > header label input ,
+.jp-GraphQL-URL input {
+  flex: 1;
+  background-color: var(--jp-layout-color2);
+  color: var(--jp-ui-font-color2);
+  border: 0;
+  padding: calc(var(--jp-ui-font-size1) / 4);
+  background-image: var(--jpgql-icon-graphql);
+  background-position: left calc(var(--jp-ui-font-size1) / 4) center;
+  background-repeat: no-repeat;
+  background-size: var(--jp-ui-font-size1);
+  border-radius: calc(var(--jp-ui-font-size1) / 4);
+  padding: calc(var(--jp-ui-font-size1) / 4) calc(1.5 * var(--jp-ui-font-size1));
+}
+
+.jp-GraphQL-Editor {
+  display: flex;
+  flex-direction: column;
+}
+
+.jp-GraphQL-Editor .CodeMirror {
+  flex: 1;
+  position: relative;
+  overflow-y: auto;
+}
+
+.jp-GraphQL-Editor .CodeMirror .CodeMirror-gutters {
+  background-color: transparent;
+}
+
+.jp-GraphQL-Structured {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+}
+
+.jp-GraphQL-Structured pre {
+  overflow-y: auto;
+  flex: 1;
+  background-color: var(--jp-layout-color2);
+}
+
+.jp-GraphQL-PopIcon {
+  background-image: var(--jpgql-icon-open-in-new);
+}
+
+button.jp-GraphQL-PopIcon {
+  background-image: var(--jpgql-icon-open-in-new);
+  border: 0;
+  min-height: 18px;
+  min-width: 18px;
+  background-size: 16px;
+  background-color: transparent;
+  background-repeat: no-repeat;
+}

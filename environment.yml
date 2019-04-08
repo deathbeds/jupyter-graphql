@@ -3,15 +3,21 @@ name: jupyter-graphql-dev
 channels:
   - conda-forge
   - defaults
+  - bioconda
 
 dependencies:
   - gql
   - graphene
   - iso8601
   - jupyterlab >=0.35,<0.36
+  - pandas
+  - pyld
   - python >=3.6,<3.7
+  - rdflib-jsonld
   - requests
+  - requests-cache
   - werkzeug
+  - nodejs >=8,<9
   - pip:
     - graphql-ws
     - graphene-tornado

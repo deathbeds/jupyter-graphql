@@ -17,12 +17,12 @@ commands:
 
 env_specs:
   default:
+    inherit_from:
+    - jupyter-graphql-dev
     platforms:
     - linux-64
     - osx-64
     - win-64
-    inherit_from:
-    - jupyter-graphql-dev
     packages:
     - black
     - flake8
@@ -34,8 +34,13 @@ env_specs:
     - graphene
     - iso8601
     - jupyterlab >=0.35,<0.36
+    - nodejs >=8,<9
+    - pandas
+    - pyld
     - python >=3.6,<3.7
+    - rdflib-jsonld
     - requests
+    - requests-cache
     - werkzeug
     - pip:
       - graphql-ws
@@ -43,3 +48,4 @@ env_specs:
     channels:
     - conda-forge
     - defaults
+    - bioconda

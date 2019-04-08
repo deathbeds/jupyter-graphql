@@ -7,7 +7,9 @@ _scripts/
 *.egg-info/
 *.log
 *.tar.gz
+*.tsbuildinfo
 envs/
 lib/
-Untitled*.ipynb
+node_modules/
 static/
+Untitled*.ipynb
