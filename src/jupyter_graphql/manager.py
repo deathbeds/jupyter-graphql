@@ -1,12 +1,11 @@
-from traitlets.config import LoggingConfigurable
-import traitlets as T
-
 import entrypoints
-
 import graphene as G
+import traitlets as T
+from traitlets.config import LoggingConfigurable
+
 from ._version import __version__
-from .subscriptions import TornadoSubscriptionServer
 from .constants import ENTRY_POINT
+from .subscriptions import TornadoSubscriptionServer
 
 
 class GraphQLManager(LoggingConfigurable):

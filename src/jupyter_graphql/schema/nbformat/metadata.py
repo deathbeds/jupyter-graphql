@@ -1,6 +1,6 @@
 import graphene as G
 
-from . import NBFormat, Named, Nameable
+from . import Nameable, Named, NBFormat
 
 
 class KernelSpecMeta(G.ObjectType):

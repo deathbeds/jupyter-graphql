@@ -1,6 +1,6 @@
-from urllib.request import urlretrieve
-from urllib.parse import urlparse
 import sys
+from urllib.parse import urlparse
+from urllib.request import urlretrieve
 
 from .constants import STATIC
 

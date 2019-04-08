@@ -1,7 +1,7 @@
 name: jupyter-graphql-dev
 
 variables:
-  PY_SRC: src/py setup.py
+  PY_SRC: src setup.py
 
 commands:
   lab:
@@ -9,7 +9,7 @@ commands:
   setup:
     unix: pip install -e . --ignore-installed --no-deps
   lint:
-    unix: isort -r $PY_SRC && black $PY_SRC
+    unix: isort -rc $PY_SRC && black $PY_SRC && jlpm lint
   atom:
     unix: atom .
   static:

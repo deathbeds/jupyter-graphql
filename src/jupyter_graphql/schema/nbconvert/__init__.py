@@ -1,7 +1,6 @@
 import graphene as G
-
-from nbconvert.exporters.export import get_export_names
 from nbconvert.exporters.base import get_exporter
+from nbconvert.exporters.export import get_export_names
 
 from ..contents.base import CM
 

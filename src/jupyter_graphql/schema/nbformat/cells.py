@@ -1,7 +1,7 @@
 import graphene as G
 
-from .output import Media, Output, OUTPUT_TYPES
 from .cell_metadata import CodeCellMetaData, MarkdownCellMetaData, RawCellMetaData
+from .output import OUTPUT_TYPES, Media, Output
 
 
 class CellType(G.Enum):

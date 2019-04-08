@@ -1,11 +1,9 @@
 from asyncio import Queue
 
-from notebook.base.handlers import IPythonHandler
-
-from tornado import websocket, ioloop
-
 from graphene_tornado.tornado_graphql_handler import TornadoGraphQLHandler
 from graphql_ws.constants import GRAPHQL_WS
+from notebook.base.handlers import IPythonHandler
+from tornado import ioloop, websocket
 
 
 class GraphQLHandler(TornadoGraphQLHandler, IPythonHandler):

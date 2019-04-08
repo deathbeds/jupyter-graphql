@@ -2,7 +2,6 @@ import graphene as G
 
 from ..utils import load_bases
 
-
 CELL_METADATA_ENTRY_POINT = "jupyter_graphql_schema.CellMetaData"
 
 

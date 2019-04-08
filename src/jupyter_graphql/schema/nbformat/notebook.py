@@ -1,8 +1,6 @@
 import graphene as G
 
-from . import cells
-from . import NBFormat
-
+from . import NBFormat, cells
 from .metadata import NotebookMetadata
 
 

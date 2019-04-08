@@ -14,6 +14,7 @@
     "bootstrap": "jlpm --no-optional && jlpm lerna bootstrap && jlpm build",
     "build": "lerna run build --stream",
     "watch": "lerna run --stream --parallel --prefix watch",
+    "lint": "jlpm prettier",
     "prettier": "prettier --write *.json *.md *.yml && lerna exec --stream -- prettier --write --config=../../.prettierrc ./src/**/*.ts ./style/**/*.css ./*.json ./*.md"
   }
 }

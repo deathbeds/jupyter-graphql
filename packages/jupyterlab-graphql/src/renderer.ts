@@ -10,10 +10,6 @@ import {
   DocumentWidget,
 } from '@jupyterlab/docregistry';
 
-// import { PromiseDelegate } from '@phosphor/coreutils';
-
-// import { Message } from '@phosphor/messaging';
-
 import {Widget, SplitPanel, SplitLayout} from '@phosphor/widgets';
 
 import * as C from '.';

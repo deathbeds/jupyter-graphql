@@ -1,15 +1,13 @@
 from asyncio import Queue
 
-from tornado import ioloop
 import graphene as G
 import graphene.relay as R
-
 from graphene.types.datetime import DateTime
+from tornado import ioloop
 
 from ..nbformat import notebook
 from ..utils import GET
-
-from .base import RESOLVE_CONTENT, CM
+from .base import CM, RESOLVE_CONTENT
 
 
 class ContentType(G.Enum):

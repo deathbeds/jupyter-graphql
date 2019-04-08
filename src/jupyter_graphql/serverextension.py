@@ -1,10 +1,9 @@
 from notebook.base.handlers import FileFindHandler
-
 from notebook.utils import url_path_join as ujoin
 
+from .constants import STATIC, TEMPLATES
 from .handlers import GraphQLHandler, SubscriptionHandler
 from .manager import GraphQLManager
-from .constants import TEMPLATES, STATIC
 
 
 def load_jupyter_server_extension(app):

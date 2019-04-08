@@ -1,20 +1,18 @@
 # Temporary vendoring from
 # https://github.com/graphql-python/graphql-ws/blob/cf560b9a5d18d4a3908dc2cfe2199766cc988fef/graphql_ws/tornado.py
+from asyncio import ensure_future, shield, wait
 from inspect import isawaitable
-from asyncio import ensure_future, wait, shield
-
-from tornado.websocket import WebSocketClosedError
 
 from graphql import graphql
 from graphql.execution.executors.asyncio import AsyncioExecutor
-
 from graphql_ws.base import (
-    ConnectionClosedException,
     BaseConnectionContext,
     BaseSubscriptionServer,
+    ConnectionClosedException,
 )
+from graphql_ws.constants import GQL_COMPLETE, GQL_CONNECTION_ACK, GQL_CONNECTION_ERROR
 from graphql_ws.observable_aiter import setup_observable_extension
-from graphql_ws.constants import GQL_CONNECTION_ACK, GQL_CONNECTION_ERROR, GQL_COMPLETE
+from tornado.websocket import WebSocketClosedError
 
 setup_observable_extension()
 
