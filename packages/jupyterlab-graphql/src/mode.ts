@@ -17,11 +17,10 @@ import 'codemirror/addon/fold/foldgutter';
 import 'codemirror/addon/fold/brace-fold';
 import 'codemirror/addon/fold/foldgutter.css';
 
-
 (CodeMirror as any).defineMIME('application/graphql', 'graphql');
 (CodeMirror as any).modeInfo.push({
   ext: ['graphql', '.graphql'],
   mime: 'application/graphql',
   mode: 'graphql',
-  name: 'GraphQL'
+  name: 'GraphQL',
 });

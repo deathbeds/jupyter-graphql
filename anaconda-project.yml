@@ -18,34 +18,34 @@ commands:
 env_specs:
   default:
     inherit_from:
-    - jupyter-graphql-dev
+      - jupyter-graphql-dev
     platforms:
-    - linux-64
-    - osx-64
-    - win-64
+      - linux-64
+      - osx-64
+      - win-64
     packages:
-    - black
-    - flake8
-    - beautysh
-    - isort
+      - black
+      - flake8
+      - beautysh
+      - isort
   jupyter-graphql-dev:
     packages:
-    - gql
-    - graphene
-    - iso8601
-    - jupyterlab >=0.35,<0.36
-    - nodejs >=8,<9
-    - pandas
-    - pyld
-    - python >=3.6,<3.7
-    - rdflib-jsonld
-    - requests
-    - requests-cache
-    - werkzeug
-    - pip:
-      - graphql-ws
-      - graphene-tornado
+      - gql
+      - graphene
+      - iso8601
+      - jupyterlab >=0.35,<0.36
+      - nodejs >=8,<9
+      - pandas
+      - pyld
+      - python >=3.6,<3.7
+      - rdflib-jsonld
+      - requests
+      - requests-cache
+      - werkzeug
+      - pip:
+          - graphql-ws
+          - graphene-tornado
     channels:
-    - conda-forge
-    - defaults
-    - bioconda
+      - conda-forge
+      - defaults
+      - bioconda

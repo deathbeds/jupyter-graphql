@@ -19,5 +19,5 @@ dependencies:
   - requests-cache
   - werkzeug
   - pip:
-    - graphql-ws
-    - graphene-tornado
+      - graphql-ws
+      - graphene-tornado

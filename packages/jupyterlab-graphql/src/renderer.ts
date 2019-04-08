@@ -1,32 +1,34 @@
 import React from 'react';
 import CodeMirror from 'codemirror';
-import { VDomRenderer, VDomModel } from '@jupyterlab/apputils';
+import {VDomRenderer, VDomModel} from '@jupyterlab/apputils';
 import * as graphql from 'graphql';
 
 import {
   ABCWidgetFactory,
   DocumentRegistry,
   IDocumentWidget,
-  DocumentWidget
+  DocumentWidget,
 } from '@jupyterlab/docregistry';
 
 // import { PromiseDelegate } from '@phosphor/coreutils';
 
 // import { Message } from '@phosphor/messaging';
 
-import { Widget, SplitPanel, SplitLayout } from '@phosphor/widgets';
+import {Widget, SplitPanel, SplitLayout} from '@phosphor/widgets';
 
 import * as C from '.';
 
 const h = React.createElement;
 
 const headers = {
-  'Content-Type': 'application/json'
+  'Content-Type': 'application/json',
 };
 
 export class GraphQLFactory extends ABCWidgetFactory<IDocumentWidget<GraphQLEditor>> {
-  protected createNewWidget(context: DocumentRegistry.Context): IDocumentWidget<GraphQLEditor> {
-    return new GraphQLDocumentWidget({ context });
+  protected createNewWidget(
+    context: DocumentRegistry.Context
+  ): IDocumentWidget<GraphQLEditor> {
+    return new GraphQLDocumentWidget({context});
   }
 }
 
@@ -63,7 +65,7 @@ export class GraphQLEditor extends SplitPanel {
       this._context.model.fromString(this._editor.getValue());
       this.model.graphql = strVal;
     }
-  }
+  };
 
   onContentChanged() {
     let strVal = this._context.model.toString();
@@ -76,7 +78,7 @@ export class GraphQLEditor extends SplitPanel {
   onStateChanged() {
     let schema = this.model.schema;
     if (schema != null) {
-      let opts = { schema };
+      let opts = {schema};
       this._editor.setOption('lint', opts);
       this._editor.setOption('hintOptions', opts);
     }
@@ -101,12 +103,9 @@ export class GraphQLEditor extends SplitPanel {
     return {
       mode: 'graphql',
       theme: 'material',
-      gutters: [
-        'CodeMirror-line-numbers',
-        'CodeMirror-lint-markers'
-      ],
+      gutters: ['CodeMirror-line-numbers', 'CodeMirror-lint-markers'],
       extraKeys: {
-        'Ctrl-Space': 'autocomplete'
+        'Ctrl-Space': 'autocomplete',
       },
       lineNumbers: true,
       lineWrapping: true,
@@ -119,14 +118,12 @@ export class GraphQLEditor extends SplitPanel {
       theme: 'material',
       lineWrapping: true,
       extraKeys: {
-        'Ctrl-Q': (cm: CodeMirror.Doc) => (cm as any).foldCode(cm.getCursor()) },
+        'Ctrl-Q': (cm: CodeMirror.Doc) => (cm as any).foldCode(cm.getCursor()),
+      },
       foldGutter: true,
-      gutters: [
-        'CodeMirror-foldgutter',
-      ]
+      gutters: ['CodeMirror-foldgutter'],
     };
   }
-
 }
 
 export namespace GraphQLEditor {
@@ -141,11 +138,10 @@ export class GraphQLDocumentWidget extends DocumentWidget<GraphQLEditor> {
   private _editor: CodeMirror.Editor;
 
   constructor(options: GraphQLDocumentWidget.IOptions) {
-
-    let { content, context, reveal, ...other } = options;
+    let {content, context, reveal, ...other} = options;
     let model = new GraphQLDocumentWidget.Model();
     content = content || Private.createContent(context, model);
-    super({ content, context, reveal, ...other });
+    super({content, context, reveal, ...other});
     this.title.iconClass = C.CSS.ICON;
     this.addClass(C.CSS.DOC);
 
@@ -156,20 +152,19 @@ export class GraphQLDocumentWidget extends DocumentWidget<GraphQLEditor> {
   onStateChanged() {
     let schema = this.model.schema;
     if (schema != null) {
-      let opts = { schema };
+      let opts = {schema};
       this._editor.setOption('lint', opts);
       this._editor.setOption('hintOptions', opts);
     }
   }
 }
 
-
 namespace Private {
   export function createContent(
     context: DocumentRegistry.IContext<DocumentRegistry.IModel>,
     model: GraphQLDocumentWidget.Model
   ) {
-    return new GraphQLEditor({ context, model });
+    return new GraphQLEditor({context, model});
   }
 }
 
@@ -185,14 +180,16 @@ export class GraphQLURL extends VDomRenderer<GraphQLDocumentWidget.Model> {
       return null;
     }
 
-    return h('label', {},
+    return h(
+      'label',
+      {},
       h('input', {placeholder: 'GraphQL URL', onChange: this.handleUrlChange})
     );
   }
 
   handleUrlChange = (evt: Event) => {
     this.model.url = (evt.target as HTMLInputElement).value;
-  }
+  };
 }
 
 export class GraphQLExplorer extends VDomRenderer<GraphQLDocumentWidget.Model> {
@@ -208,9 +205,12 @@ export class GraphQLExplorer extends VDomRenderer<GraphQLDocumentWidget.Model> {
       return null;
     }
 
-    return h('div',
+    return h(
+      'div',
       {className: C.CSS.DOC_BODY},
-      h('div', {className: 'jp-GraphQL-Structured'},
+      h(
+        'div',
+        {className: 'jp-GraphQL-Structured'},
         h('pre', {}, JSON.stringify(this.model.results || {}, null, 2))
       )
     );
@@ -218,12 +218,12 @@ export class GraphQLExplorer extends VDomRenderer<GraphQLDocumentWidget.Model> {
 
   handleUrlChange = (evt: Event) => {
     this.model.url = (evt.target as HTMLInputElement).value;
-  }
+  };
 }
 
 export namespace GraphQLDocumentWidget {
-  export interface IOptions extends DocumentWidget.IOptionsOptionalContent<GraphQLEditor> {
-  }
+  export interface IOptions
+    extends DocumentWidget.IOptionsOptionalContent<GraphQLEditor> {}
 
   export class Model extends VDomModel {
     private _graphql: string;
@@ -249,7 +249,7 @@ export namespace GraphQLDocumentWidget {
       let r = await fetch(url, {
         method: 'POST',
         headers,
-        body: JSON.stringify({'query': graphql.introspectionQuery})
+        body: JSON.stringify({query: graphql.introspectionQuery}),
       });
 
       let schemaResult = await r.json();
@@ -261,7 +261,7 @@ export namespace GraphQLDocumentWidget {
       let r = await fetch(this.url, {
         method: 'POST',
         headers,
-        body: JSON.stringify({query})
+        body: JSON.stringify({query}),
       });
       this.results = (await r.json())['data'];
     }

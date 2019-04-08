@@ -40,7 +40,6 @@
     "codemirror": "~5.39.0",
     "@jupyterlab/rendermime-interfaces": "^1.2.1"
   },
-
   "homepage": "https://github.com/deathbeds/jupyter-graphql",
   "repository": {
     "type": "git",

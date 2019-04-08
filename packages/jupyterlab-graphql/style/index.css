@@ -1,6 +1,6 @@
 :root {
   --jpgql-icon-open-in-new: url(./icons/open-in-new.svg);
-  --jpgql-icon-graphql: url(./icons/graphql.svg)
+  --jpgql-icon-graphql: url(./icons/graphql.svg);
 }
 
 .jp-GraphQLIcon {
@@ -50,7 +50,7 @@
   flex: 1;
 }
 
-.jp-GraphQL-Body > header label input ,
+.jp-GraphQL-Body > header label input,
 .jp-GraphQL-URL input {
   flex: 1;
   background-color: var(--jp-layout-color2);

@@ -1,45 +1,37 @@
-import {
-  ILayoutRestorer,
-  JupyterLab,
-  JupyterLabPlugin
-} from '@jupyterlab/application';
+import {ILayoutRestorer, JupyterLab, JupyterLabPlugin} from '@jupyterlab/application';
 
 import './mode';
 import '../style/index.css';
 
-import { InstanceTracker } from '@jupyterlab/apputils';
+import {InstanceTracker} from '@jupyterlab/apputils';
 
-import { IDocumentWidget } from '@jupyterlab/docregistry';
+import {IDocumentWidget} from '@jupyterlab/docregistry';
 
 import {GraphQLFactory, GraphQLEditor} from './renderer';
 
-
-import { PLUGIN_ID as id, FACTORY_GRAPHQL, TYPES } from '.';
+import {PLUGIN_ID as id, FACTORY_GRAPHQL, TYPES} from '.';
 
 const graphql: JupyterLabPlugin<void> = {
   activate: activateGraphql,
   id,
   requires: [ILayoutRestorer],
-  autoStart: true
+  autoStart: true,
 };
 
-function activateGraphql(
-  app: JupyterLab,
-  restorer: ILayoutRestorer
-): void {
+function activateGraphql(app: JupyterLab, restorer: ILayoutRestorer): void {
   const factory = new GraphQLFactory({
     name: FACTORY_GRAPHQL,
     fileTypes: ['graphql'],
-    defaultFor: ['graphql']
+    defaultFor: ['graphql'],
   });
   const tracker = new InstanceTracker<IDocumentWidget<GraphQLEditor>>({
-    namespace: 'graphql'
+    namespace: 'graphql',
   });
 
   restorer.restore(tracker, {
     command: 'docmanager:open',
-    args: widget => ({ path: widget.context.path, factory: FACTORY_GRAPHQL }),
-    name: widget => widget.context.path
+    args: (widget) => ({path: widget.context.path, factory: FACTORY_GRAPHQL}),
+    name: (widget) => widget.context.path,
   });
 
   for (let type of Object.keys(TYPES)) {

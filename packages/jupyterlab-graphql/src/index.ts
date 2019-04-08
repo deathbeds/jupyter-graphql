@@ -5,7 +5,6 @@ export const MIME_ID_TMPL = `${PLUGIN_NS}:mime:`;
 export const MIME_GRAPHQL = 'application/graphql';
 export const FACTORY_GRAPHQL = 'GraphQLExplorer';
 
-
 export const CMD = {
   NEW_DOC: 'docmanager:new-untitled',
   OPEN_DOC: 'docmanager:open',
@@ -18,7 +17,7 @@ export const CSS = {
   DOC_BODY: 'jp-GraphQL-Body',
   URL: 'jp-GraphQL-URL',
   EDIT: 'jp-GraphQL-Editor',
-  POP: 'jp-GraphQL-PopIcon'
+  POP: 'jp-GraphQL-PopIcon',
 };
 
 export const TYPES = {
@@ -26,6 +25,6 @@ export const TYPES = {
     name: 'graphql',
     mimeTypes: [MIME_GRAPHQL],
     extensions: ['.graphql'],
-    iconClass: CSS.ICON
-  }
+    iconClass: CSS.ICON,
+  },
 };
