@@ -2,7 +2,7 @@ from urllib.request import urlretrieve
 from urllib.parse import urlparse
 import sys
 
-from . import STATIC
+from .constants import STATIC
 
 # Download the file from `url` and save it locally under `file_name`:
 
