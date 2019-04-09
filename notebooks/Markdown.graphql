@@ -1,0 +1,7 @@
+query {
+  	nbconvert {
+    	markdown(path: "notebooks/GraphQL Editor.ipynb") {
+      		output
+    	}
+   }
+}

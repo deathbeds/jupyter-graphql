@@ -3,15 +3,17 @@ import {ILayoutRestorer, JupyterLab, JupyterLabPlugin} from '@jupyterlab/applica
 import './mode';
 import '../style/index.css';
 
-import {InstanceTracker} from '@jupyterlab/apputils';
+import {InstanceTracker, MainAreaWidget} from '@jupyterlab/apputils';
 
 import {IDocumentWidget} from '@jupyterlab/docregistry';
 
 import {GraphQLFactory, GraphQLEditor} from './renderer';
+import {GraphQLSchema} from './renderers/schema';
+import {GraphQLDocs} from './renderers/docs';
 
-import {PLUGIN_ID as id, FACTORY_GRAPHQL, TYPES} from '.';
+import {PLUGIN_ID as id, FACTORY_GRAPHQL, TYPES, CMD, CSS} from '.';
 
-const graphql: JupyterLabPlugin<void> = {
+const graphqlPlugin: JupyterLabPlugin<void> = {
   activate: activateGraphql,
   id,
   requires: [ILayoutRestorer],
@@ -19,10 +21,12 @@ const graphql: JupyterLabPlugin<void> = {
 };
 
 function activateGraphql(app: JupyterLab, restorer: ILayoutRestorer): void {
+  const {commands, shell} = app;
   const factory = new GraphQLFactory({
     name: FACTORY_GRAPHQL,
     fileTypes: ['graphql'],
     defaultFor: ['graphql'],
+    commands
   });
   const tracker = new InstanceTracker<IDocumentWidget<GraphQLEditor>>({
     namespace: 'graphql',
@@ -51,7 +55,29 @@ function activateGraphql(app: JupyterLab, restorer: ILayoutRestorer): void {
       widget.title.iconLabel = ft.iconLabel;
     }
   });
+
+  commands.addCommand(CMD.GQL_DOCS, {
+    execute: (args) => {
+      const {model} = args;
+      const content = new GraphQLDocs(model as any);
+      const widget = new MainAreaWidget({content});
+      widget.title.iconClass = CSS.ICON;
+      widget.title.label = 'Docs';
+      shell.addToMainArea(widget, {mode: 'split-right'});
+    }
+  });
+
+  commands.addCommand(CMD.GQL_SCHEMA, {
+    execute: (args) => {
+      const {model} = args;
+      const content = new GraphQLSchema(model as any);
+      const widget = new MainAreaWidget({content});
+      widget.title.iconClass = CSS.ICON;
+      widget.title.label = 'Schema';
+      shell.addToMainArea(widget, {mode: 'split-right'});
+    }
+  });
 }
 
-const plugins: JupyterLabPlugin<any>[] = [graphql];
+const plugins: JupyterLabPlugin<any>[] = [graphqlPlugin];
 export default plugins;

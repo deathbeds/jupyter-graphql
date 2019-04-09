@@ -15,93 +15,83 @@
   flex-direction: column;
 }
 
-.jp-GraphQL-Body {
+/* url widget */
+.jp-Toolbar > .jp-Toolbar-item.jp-GraphQL-URL,
+.jp-GraphQL-URL > div {
   flex: 1;
   display: flex;
-  flex-direction: column;
+  align-items: center;
 }
 
-.jp-GraphQL-Body header {
+.jp-GraphQL-URL label,
+.jp-GraphQL-URL button {
   flex-grow: 0;
-  display: flex;
-  flex-direction: row;
-}
-
-.jp-GraphQL-Body > header label {
-  flex: 1;
-  display: flex;
-  padding: calc(var(--jp-ui-font-size1) / 2);
-}
-
-.jp-GraphQL-Body > header label span {
-  flex-grow: 0;
-  padding-right: calc(var(--jp-ui-font-size1) / 2);
-  position: absolute;
-  z-index: -1;
-}
-
-.jp-Toolbar > .jp-Toolbar-item.jp-GraphQL-URL {
-  flex: 1;
-  display: flex;
+  color: var(--jp-ui-font-color2);
+  font-size: var(--jp-ui-font-size0);
+  margin: calc(var(--jp-ui-font-size1) / 2);
+  border: 0;
+  background-color: transparent;
 }
 
 .jp-GraphQL-URL label {
-  display: flex;
-  flex: 1;
+  font-style: italic;
 }
 
-.jp-GraphQL-Body > header label input,
+.jp-GraphQL-URL button {
+  font-weight: bold;
+  padding: calc(var(--jp-ui-font-size1) / 2);
+}
+
+.jp-GraphQL-URL button:focus,
+.jp-GraphQL-URL button:hover {
+  background-color: var(--jp-layout-color2);
+}
+
 .jp-GraphQL-URL input {
   flex: 1;
   background-color: var(--jp-layout-color2);
   color: var(--jp-ui-font-color2);
-  border: 0;
-  padding: calc(var(--jp-ui-font-size1) / 4);
-  background-image: var(--jpgql-icon-graphql);
+  border: var(--jp-border-width) solid var(--jp-border-color2);
   background-position: left calc(var(--jp-ui-font-size1) / 4) center;
   background-repeat: no-repeat;
   background-size: var(--jp-ui-font-size1);
   border-radius: calc(var(--jp-ui-font-size1) / 4);
-  padding: calc(var(--jp-ui-font-size1) / 4) calc(1.5 * var(--jp-ui-font-size1));
+  padding: calc(var(--jp-ui-font-size1) / 2);
 }
 
+/* schema/editor */
+.jp-GraphQL-Schema,
 .jp-GraphQL-Editor {
   display: flex;
   flex-direction: column;
 }
 
+.jp-GraphQL-Schema .CodeMirror,
 .jp-GraphQL-Editor .CodeMirror {
   flex: 1;
   position: relative;
   overflow-y: auto;
 }
 
+.jp-GraphQL-Schema .CodeMirror .CodeMirror-gutters,
 .jp-GraphQL-Editor .CodeMirror .CodeMirror-gutters {
   background-color: transparent;
 }
 
-.jp-GraphQL-Structured {
-  flex: 1;
+/* docs */
+.jp-GraphQL-Docs {
   display: flex;
-  flex-direction: row;
-}
-
-.jp-GraphQL-Structured pre {
-  overflow-y: auto;
-  flex: 1;
+  flex-direction: column;
   background-color: var(--jp-layout-color2);
+  color: var(--jp-ui-font-color1);
 }
 
-.jp-GraphQL-PopIcon {
-  background-image: var(--jpgql-icon-open-in-new);
+.jp-GraphQL-Docs > div {
+  flex: 1;
+  overflow-y: scroll;
+  padding: 0 calc(var(--jp-ui-font-size1) / 2);
 }
 
-button.jp-GraphQL-PopIcon {
-  background-image: var(--jpgql-icon-open-in-new);
-  border: 0;
-  min-height: 18px;
-  min-width: 18px;
-  background-size: 16px;
-  background-color: transparent;
-  background-repeat: no-repeat;
+.jp-GraphQL-Docs summary {
+  font-weight: bold;
 }

@@ -1,0 +1,13 @@
+query {
+  	contents(path: "notebooks") {
+  		... on DirectoryContents {
+	  		content {
+				edges {
+					node {
+						path
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,15 @@
+query {
+  	contents(path: "notebooks/GraphQL Editor.ipynb") {
+  		... on NotebookContents {
+	  		content {
+				cells {
+          			edges {
+                       node {
+                         source
+                       }
+                    }
+        		}
+			}
+		}
+	}
+}

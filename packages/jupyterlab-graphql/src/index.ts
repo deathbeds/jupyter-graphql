@@ -9,15 +9,18 @@ export const CMD = {
   NEW_DOC: 'docmanager:new-untitled',
   OPEN_DOC: 'docmanager:open',
   NEW_GV: 'graphviz:new-untitled',
+  GQL_DOCS: 'graphql:docs',
+  GQL_SCHEMA: 'graphql:schema'
 };
 
 export const CSS = {
   ICON: 'jp-GraphQLIcon',
   DOC: 'jp-GraphQL',
-  DOC_BODY: 'jp-GraphQL-Body',
   URL: 'jp-GraphQL-URL',
   EDIT: 'jp-GraphQL-Editor',
   POP: 'jp-GraphQL-PopIcon',
+  SCHEMA: 'jp-GraphQL-Schema',
+  DOCS: 'jp-GraphQL-Docs'
 };
 
 export const TYPES = {
