@@ -2,7 +2,7 @@
   --jpgqlv-icon-voyager: url(./icons/voyager.svg);
 }
 
-.jp-GraphQLVoyager-Icon {
-  background-image: var(--jpgqlv-icon-voyager);
+.jp-GraphQLVoyageur-Icon {
+  background-image: var(--jpgqlv-icon-graphql-voyager);
   background-repeat: no-repeat;
 }

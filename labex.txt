@@ -1,2 +1,2 @@
 ./packages/jupyterlab-graphql
-./packages/jupyterlab-graphql-voyager
+./packages/jupyterlab-graphql-voyageur

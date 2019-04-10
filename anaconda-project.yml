@@ -9,9 +9,16 @@ commands:
   setup:
     unix: pip install -e . --ignore-installed --no-deps
   lint:
-    unix: isort -rc $PY_SRC && black $PY_SRC && jlpm lint
+    unix: set -eux && isort -rc $PY_SRC && black $PY_SRC && jlpm lint
   lab:down:
-    unix: rm -rf $PROJECT_DIR/envs/default/share/jupyter/lab && jlpm cache clean
+    unix: |-
+      set -eux \
+      && rm -rf \
+        $CONDA_PREFIX/share/jupyter/lab \
+        ./node_modules \
+      && jlpm cache clean
+  lab:hack:
+    unix: cd $CONDA_PREFIX/share/jupyter/lab/staging && jlpm
   atom:
     unix: atom .
   static:

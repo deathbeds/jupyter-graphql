@@ -6,8 +6,7 @@
   "description": "GraphQL Voyager for JupyterLab",
   "dependencies": {
     "graphql": "*",
-    "graphql-voyager": "1.0.0-rc.26",
-    "@deathbeds/jupyterlab-graphql": "^0.1.0"
+    "graphql-voyager": "1.0.0-rc.26"
   },
   "devDependencies": {
     "@jupyterlab/application": "^0.19.1",
@@ -34,7 +33,7 @@
     "graphql"
   ],
   "main": "lib/index.js",
-  "name": "@deathbeds/jupyterlab-graphql-voyager",
+  "name": "@deathbeds/jupyterlab-graphql-voyageur",
   "peerDependencies": {
     "@deathbeds/jupyterlab-graphql": "*",
     "@jupyterlab/application": "^0.19.1",

@@ -1,15 +1,17 @@
 import {JupyterLab, JupyterLabPlugin} from '@jupyterlab/application';
 
-import './mode';
 import '../style/index.css';
-import {GraphQLVoyager} from 'graphql-voyager';
+import { Voyageur } from './renderers/voyageur';
 
 import {PLUGIN_ID as id} from '.';
 
 
 const graphqlPlugin: JupyterLabPlugin<void> = {
   activate: (_: JupyterLab): void => {
-    console.log(_, `let's explore!`, GraphQLVoyager);
+    const {shell} = _;
+    // TODO: command, but probably register callback
+    let widget = new Voyageur({});
+    shell.addToMainArea(widget);
   },
   id,
   autoStart: true,
