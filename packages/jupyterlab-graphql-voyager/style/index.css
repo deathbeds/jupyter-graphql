@@ -1,0 +1,8 @@
+:root {
+  --jpgqlv-icon-voyager: url(./icons/voyager.svg);
+}
+
+.jp-GraphQLVoyager-Icon {
+  background-image: var(--jpgqlv-icon-voyager);
+  background-repeat: no-repeat;
+}
