@@ -10,6 +10,8 @@ commands:
     unix: pip install -e . --ignore-installed --no-deps
   lint:
     unix: isort -rc $PY_SRC && black $PY_SRC && jlpm lint
+  lab:down:
+    unix: rm -rf $PROJECT_DIR/envs/default/share/jupyter/lab && jlpm cache clean
   atom:
     unix: atom .
   static:
