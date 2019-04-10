@@ -17,6 +17,11 @@ commands:
         $CONDA_PREFIX/share/jupyter/lab \
         ./node_modules \
       && jlpm cache clean
+  tsc:
+    unix: |-
+      set -eux \
+      && cd packages/jupyterlab-graphql-voyageur \
+      && jlpm watch
   lab:hack:
     unix: cd $CONDA_PREFIX/share/jupyter/lab/staging && jlpm
   atom:
