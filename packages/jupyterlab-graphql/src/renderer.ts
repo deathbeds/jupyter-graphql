@@ -1,6 +1,5 @@
-import React from 'react';
 import CodeMirror from 'codemirror';
-import {VDomRenderer, VDomModel} from '@jupyterlab/apputils';
+import {VDomModel} from '@jupyterlab/apputils';
 import {PageConfig} from '@jupyterlab/coreutils';
 import {CommandRegistry} from '@phosphor/commands';
 import * as graphql from 'graphql';
@@ -17,8 +16,7 @@ const DEFAULT_GRAPHQL_URL = `${PageConfig.getBaseUrl()}graphql`;
 import {Widget, SplitPanel, SplitLayout} from '@phosphor/widgets';
 
 import * as C from '.';
-
-const h = React.createElement;
+import {GraphQLURL} from './renderers/url';
 
 const headers = {
   'Content-Type': 'application/json',
@@ -26,21 +24,24 @@ const headers = {
 
 export class GraphQLFactory extends ABCWidgetFactory<IDocumentWidget<GraphQLEditor>> {
   private _commands: CommandRegistry;
+  private _manager: C.IGraphQLManager;
 
   constructor(options: GraphQLFactory.IOptions) {
     super(options);
     this._commands = options.commands;
+    this._manager = options.manager;
   }
   protected createNewWidget(
     context: DocumentRegistry.Context
   ): IDocumentWidget<GraphQLEditor> {
-    return new GraphQLDocumentWidget({context, commands: this._commands});
+    return new GraphQLDocumentWidget({context, commands: this._commands, manager: this._manager});
   }
 }
 
 export namespace GraphQLFactory {
   export interface IOptions extends DocumentRegistry.IWidgetFactoryOptions {
-    commands: CommandRegistry
+    commands: CommandRegistry;
+    manager: C.IGraphQLManager;
   }
 }
 
@@ -145,6 +146,7 @@ export namespace GraphQLEditor {
     context: DocumentRegistry.Context;
     model: GraphQLDocumentWidget.Model;
     commands: CommandRegistry;
+    manager: C.IGraphQLManager;
   }
 }
 
@@ -154,9 +156,10 @@ export class GraphQLDocumentWidget extends DocumentWidget<GraphQLEditor> {
   private _commands: CommandRegistry;
 
   constructor(options: GraphQLDocumentWidget.IOptions) {
-    let {content, context, reveal, commands, ...other} = options;
+    let {content, context, reveal, commands, manager, ...other} = options;
     let model = new GraphQLDocumentWidget.Model();
-    content = content || Private.createContent(context, model, commands);
+    model.manager = manager;
+    content = content || Private.createContent(context, model, commands, manager);
     super({content, context, reveal, ...other});
     this.title.iconClass = C.CSS.ICON;
     this.addClass(C.CSS.DOC);
@@ -180,71 +183,32 @@ namespace Private {
   export function createContent(
     context: DocumentRegistry.IContext<DocumentRegistry.IModel>,
     model: GraphQLDocumentWidget.Model,
-    commands: CommandRegistry
+    commands: CommandRegistry,
+    manager: C.IGraphQLManager
   ) {
-    return new GraphQLEditor({context, model, commands});
+    return new GraphQLEditor({context, model, commands, manager});
   }
 }
 
-export class GraphQLURL extends VDomRenderer<GraphQLDocumentWidget.Model> {
-  private _commands: CommandRegistry;
 
-  constructor(model: GraphQLDocumentWidget.Model, commands: CommandRegistry) {
-    super();
-    this._commands = commands;
-    this.model = model;
-    this.addClass(C.CSS.URL);
-  }
-
-  render() {
-    if (!this.model) {
-      return null;
-    }
-
-    return h(
-      'div',
-      {},
-      h('input', {
-        placeholder: 'GraphQL URL',
-        onChange: this.handleUrlChange,
-        spellCheck: false,
-        defaultValue: this.model.url || DEFAULT_GRAPHQL_URL
-      }),
-      h('button', {onClick: this.handleSchemaClick}, 'Schema'),
-      h('button', {onClick: this.handleDocsClick}, 'Docs'),
-      h('label', {}, this.model.requestDuration ?
-        `${this.model.requestDuration} ms` : '~'
-      )
-    );
-  }
-
-  handleSchemaClick = () => {
-    this._commands.execute(C.CMD.GQL_SCHEMA, {'model': this.model as any});
-  }
-
-  handleDocsClick = () => {
-    this._commands.execute(C.CMD.GQL_DOCS, {'model': this.model as any});
-  }
-
-  handleUrlChange = (evt: Event) => {
-    this.model.url = (evt.target as HTMLInputElement).value;
-  };
-}
 
 export namespace GraphQLDocumentWidget {
   export interface IOptions
     extends DocumentWidget.IOptionsOptionalContent<GraphQLEditor> {
       commands: CommandRegistry;
+      manager: C.IGraphQLManager
     }
 
   export class Model extends VDomModel {
     private _graphql: string;
     private _url: string;
     private _schema: graphql.GraphQLSchema;
+    private _introspection: any;
     private _results: object;
     private _requestStarted: Date;
     private _requestCompleted: Date;
     private _requestDuration: number;
+    private _manager: C.IGraphQLManager;
 
     get url() {
       return this._url;
@@ -267,9 +231,10 @@ export namespace GraphQLDocumentWidget {
         body: JSON.stringify({query: graphql.introspectionQuery}),
       });
 
-      let schemaResult = await r.json();
+      let response = await r.json();
 
-      this.schema = graphql.buildClientSchema(schemaResult.data);
+      this._introspection = response;
+      this.schema = graphql.buildClientSchema(response.data);
     }
 
     private _debounce: any;
@@ -344,6 +309,23 @@ export namespace GraphQLDocumentWidget {
 
     get requestDuration() {
       return this._requestDuration ? this._requestDuration : 0;
+    }
+
+    get manager() {
+      return this._manager;
+    }
+    set manager(manager) {
+      this._manager = manager;
+      this.stateChanged.emit(void 0);
+    }
+
+    get introspection() {
+      return this._introspection;
+    }
+
+    set introspection(introspection) {
+      this._introspection = introspection;
+      this.stateChanged.emit(void 0);
     }
   }
 }

@@ -15,6 +15,6 @@
     "build": "lerna run build --stream",
     "watch": "lerna run --stream --parallel --prefix watch",
     "lint": "jlpm prettier",
-    "prettier": "prettier --write *.json *.md *.yml && lerna exec --stream -- prettier --write --config=../../.prettierrc ./src/**/*.ts ./style/**/*.css ./*.json ./*.md"
+    "prettier": "prettier --write *.json *.md *.yml && lerna exec --stream -- prettier --write --config=../../.prettierrc ./src/**/*.{ts,tsx} ./style/**/*.css ./*.json ./*.md"
   }
 }

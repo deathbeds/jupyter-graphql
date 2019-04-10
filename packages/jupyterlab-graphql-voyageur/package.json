@@ -11,6 +11,7 @@
   "devDependencies": {
     "@jupyterlab/application": "^0.19.1",
     "@jupyterlab/docregistry": "^0.19.1",
+    "@deathbeds/jupyterlab-graphql": "*",
     "@types/codemirror": "^0.0.71",
     "@types/graphql": "14.2.0",
     "codemirror": "~5.39.0",

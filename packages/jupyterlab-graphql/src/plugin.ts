@@ -10,23 +10,27 @@ import {IDocumentWidget} from '@jupyterlab/docregistry';
 import {GraphQLFactory, GraphQLEditor} from './renderer';
 import {GraphQLSchema} from './renderers/schema';
 import {GraphQLDocs} from './renderers/docs';
+import {GraphQLManager} from './manager';
 
-import {PLUGIN_ID as id, FACTORY_GRAPHQL, TYPES, CMD, CSS} from '.';
+import {PLUGIN_ID as id, FACTORY_GRAPHQL, TYPES, CMD, CSS, IGraphQLManager} from '.';
 
-const graphqlPlugin: JupyterLabPlugin<void> = {
+const graphqlPlugin: JupyterLabPlugin<IGraphQLManager> = {
   activate: activateGraphql,
   id,
   requires: [ILayoutRestorer],
+  provides: IGraphQLManager,
   autoStart: true,
 };
 
-function activateGraphql(app: JupyterLab, restorer: ILayoutRestorer): void {
+function activateGraphql(app: JupyterLab, restorer: ILayoutRestorer): IGraphQLManager {
   const {commands, shell} = app;
+  const manager = new GraphQLManager();
   const factory = new GraphQLFactory({
     name: FACTORY_GRAPHQL,
     fileTypes: ['graphql'],
     defaultFor: ['graphql'],
-    commands
+    commands,
+    manager
   });
   const tracker = new InstanceTracker<IDocumentWidget<GraphQLEditor>>({
     namespace: 'graphql',
@@ -77,6 +81,8 @@ function activateGraphql(app: JupyterLab, restorer: ILayoutRestorer): void {
       shell.addToMainArea(widget, {mode: 'split-right'});
     }
   });
+
+  return manager;
 }
 
 const plugins: JupyterLabPlugin<any>[] = [graphqlPlugin];
