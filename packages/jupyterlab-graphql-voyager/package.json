@@ -10,7 +10,6 @@
     "@deathbeds/jupyterlab-graphql": "^0.1.0"
   },
   "devDependencies": {
-    "@deathbeds/jupyterlab-graphql": "*",
     "@jupyterlab/application": "^0.19.1",
     "@jupyterlab/docregistry": "^0.19.1",
     "@types/codemirror": "^0.0.71",
