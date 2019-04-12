@@ -7,3 +7,7 @@ declare module 'codemirror-graphql/mode' {}
 declare module 'codemirror/addon/fold/foldcode' {}
 declare module 'codemirror/addon/fold/foldgutter' {}
 declare module 'codemirror/addon/fold/brace-fold' {}
+
+
+declare module 'codemirror-graphql/info' {}
+declare module 'codemirror-graphql/jump' {}

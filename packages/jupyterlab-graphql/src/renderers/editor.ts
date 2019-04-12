@@ -54,9 +54,10 @@ export class GraphQLEditor extends SplitPanel {
   onStateChanged() {
     let schema = this.model.schema;
     if (schema != null) {
-      let opts = {schema};
-      this._editor.setOption('lint', opts);
-      this._editor.setOption('hintOptions', opts);
+      this._editor.setOption('lint', this.lintOptions(schema));
+      this._editor.setOption('hintOptions', this.hintOptions(schema));
+      this._editor.setOption('info', this.infoOptions(schema));
+      this._editor.setOption('jump', this.jumpOptions(schema));
     }
     this._results.setValue(JSON.stringify(this.model.results || {}, null, 2));
   }
@@ -64,7 +65,7 @@ export class GraphQLEditor extends SplitPanel {
   makeEditor() {
     let widget = new Widget();
     widget.addClass(C.CSS.EDIT);
-    this._editor = CodeMirror(widget.node, this.editorOptions());
+    this._editor = CodeMirror(widget.node, this.editorOptions() as any);
     return widget;
   }
 
@@ -85,11 +86,62 @@ export class GraphQLEditor extends SplitPanel {
         'CodeMirror-foldgutter',
       ],
       extraKeys: {
-        'Ctrl-Space': 'autocomplete',
+        'Cmd-Space': () => (this._editor as any).showHint({completeSingle: true}),
+        'Ctrl-Space': () => (this._editor as any).showHint({completeSingle: true}),
+        'Alt-Space': () => (this._editor as any).showHint({completeSingle: true}),
+        'Shift-Space': () => (this._editor as any).showHint({completeSingle: true}),
+
+        'Ctrl-Left': 'goSubwordLeft',
+        'Ctrl-Right': 'goSubwordRight',
+        'Alt-Left': 'goGroupLeft',
+        'Alt-Right': 'goGroupRight',
       },
       lineNumbers: true,
       lineWrapping: true,
       foldGutter: true,
+      autoCloseBrackets: true,
+      matchBrackets: true,
+      hintOptions: this.hintOptions(null),
+      lint: this.lintOptions(null),
+      info: this.infoOptions(null),
+      jump: this.jumpOptions(null),
+    };
+  }
+
+  jumpOptions(schema: any) {
+    return {
+      schema,
+      onClick: (reference: any) => {
+        this.model.reference = reference;
+      },
+    };
+  }
+
+  infoOptions(schema: any) {
+    return {
+      schema,
+      renderDescription: (text: any) => {
+        console.log('description', text);
+      },
+      onClick: (reference: any) => {
+        console.log('info', reference);
+      },
+    };
+  }
+
+  hintOptions(schema: any) {
+    return {
+      closeOnUnfocus: false,
+      completeSingle: false,
+      schema,
+    };
+  }
+
+  lintOptions(schema: any) {
+    return {
+      closeOnUnfocus: false,
+      completeSingle: false,
+      schema,
     };
   }
 
@@ -99,6 +151,7 @@ export class GraphQLEditor extends SplitPanel {
       theme: 'material',
       lineWrapping: true,
       foldGutter: true,
+      readOnly: true,
       gutters: ['CodeMirror-foldgutter'],
     };
   }

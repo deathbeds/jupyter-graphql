@@ -108,6 +108,11 @@
   background-color: transparent;
 }
 
+.jp-GraphQL-Editor .cm-atom:hover,
+.jp-GraphQL-Editor .cm-property:hover {
+  text-decoration: underline;
+}
+
 /* docs */
 .jp-GraphQL-Docs {
   display: flex;

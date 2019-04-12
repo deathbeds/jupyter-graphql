@@ -11,6 +11,7 @@ const DEBUG = false;
 namespace VoyageurComponent {
   export interface IProps {
     introspection: any;
+    reference: any;
   }
 }
 
@@ -18,7 +19,11 @@ function VoyageurComponent(
   _: VoyageurComponent.IProps
 ): React.ReactElement<VoyageurComponent.IProps> {
   return (
-    <GraphQLVoyager introspection={_.introspection} loadWorker={Private.loadWorker} />
+    <GraphQLVoyager
+      introspection={_.introspection}
+      loadWorker={Private.loadWorker}
+      displayOptions={{rootType: (_.reference || {}).type}}
+    />
   );
 }
 
@@ -29,20 +34,41 @@ export class Voyageur extends VDomRenderer<Voyageur.Model> {
     this.node.title = 'Voyageur';
   }
   render() {
-    return <VoyageurComponent introspection={this.model.introspection} />;
+    return (
+      <VoyageurComponent
+        introspection={this.model.introspection}
+        reference={this.model.reference}
+      />
+    );
   }
 }
 
 export namespace Voyageur {
   export class Model extends VDomModel {
     private _introspection: any;
+    private _reference: any;
 
     get introspection() {
       return this._introspection;
     }
 
     set introspection(introspection) {
+      if (this._introspection === introspection) {
+        return;
+      }
       this._introspection = introspection;
+      this.stateChanged.emit(void 0);
+    }
+
+    get reference() {
+      return this._reference;
+    }
+
+    set reference(reference) {
+      if (this._reference && this._reference.type === reference.type) {
+        return;
+      }
+      this._reference = reference;
       this.stateChanged.emit(void 0);
     }
 

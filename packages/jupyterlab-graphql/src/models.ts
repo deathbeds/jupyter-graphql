@@ -1,6 +1,7 @@
 import {VDomModel} from '@jupyterlab/apputils';
 import * as graphql from 'graphql';
 import {SubscriptionClient} from 'subscriptions-transport-ws';
+import {Signal} from '@phosphor/signaling';
 
 import * as C from '.';
 
@@ -32,6 +33,13 @@ export class GraphQLModel extends VDomModel {
   private _subscribed = false;
   private _debounce: any;
   private _socketStatus = '';
+  private _reference: any;
+
+  private _referenceChanged = new Signal<this, any>(this);
+
+  get referenceChanged() {
+    return this._referenceChanged;
+  }
 
   get url() {
     return this._url;
@@ -74,6 +82,16 @@ export class GraphQLModel extends VDomModel {
 
   get subscriptions() {
     return this._subscriptions;
+  }
+
+  get reference() {
+    return this._reference;
+  }
+
+  set reference(reference) {
+    this._reference = reference;
+    this.stateChanged.emit(void 0);
+    this._referenceChanged.emit(void 0);
   }
 
   get socketStatus() {

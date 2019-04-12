@@ -32,6 +32,7 @@ export class GraphQLSchema extends Widget {
       lineNumbers: true,
       lineWrapping: true,
       foldGutter: true,
+      readOnly: true,
     };
   }
 }

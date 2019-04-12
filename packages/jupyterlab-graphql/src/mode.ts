@@ -12,6 +12,9 @@ import 'codemirror/addon/hint/show-hint';
 import 'codemirror-graphql/hint';
 import 'codemirror/addon/hint/show-hint.css';
 
+import 'codemirror-graphql/info';
+import 'codemirror-graphql/jump';
+
 import 'codemirror/addon/fold/foldcode';
 import 'codemirror/addon/fold/foldgutter';
 import 'codemirror/addon/fold/brace-fold';
