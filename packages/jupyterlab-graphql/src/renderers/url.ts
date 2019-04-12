@@ -21,14 +21,16 @@ export class GraphQLURL extends VDomRenderer<GraphQLDocumentWidget.Model> {
   }
 
   render() {
-    if (!this.model) {
+    const m = this.model;
+
+    if (!m) {
       return null;
     }
 
     let handlers = {
       Schema: C.CMD.GQL_SCHEMA,
       Docs: C.CMD.GQL_DOCS,
-      ...this.model.manager.docToolbarItems(),
+      ...m.manager.docToolbarItems(),
     } as {[key: string]: string};
 
     return h(
@@ -38,7 +40,7 @@ export class GraphQLURL extends VDomRenderer<GraphQLDocumentWidget.Model> {
         placeholder: 'GraphQL URL',
         onChange: this.handleUrlChange,
         spellCheck: false,
-        defaultValue: this.model.url || DEFAULT_GRAPHQL_URL,
+        defaultValue: m.url || DEFAULT_GRAPHQL_URL,
       }),
       Object.keys(handlers).map((key) => {
         return h(
@@ -52,11 +54,14 @@ export class GraphQLURL extends VDomRenderer<GraphQLDocumentWidget.Model> {
           key
         );
       }),
-      h(
-        'label',
-        {},
-        this.model.requestDuration ? `${this.model.requestDuration} ms` : '~'
-      )
+      m.subscribed
+        ? h('button', {
+            className: `jp-GraphQL-socket jp-GraphQL-socket-${m.socketStatus}`,
+            onClick: () => {
+              this.model.restartClient();
+            },
+          })
+        : h('label', {}, m.requestDuration ? `${m.requestDuration} ms` : '~')
     );
   }
 

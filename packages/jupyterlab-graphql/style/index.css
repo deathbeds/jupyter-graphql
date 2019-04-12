@@ -59,6 +59,36 @@
   padding: calc(var(--jp-ui-font-size1) / 2);
 }
 
+.jp-GraphQL-URL button.jp-GraphQL-socket {
+  background-image: var(--jpgql-icon-graphql);
+  min-height: calc(var(--jp-ui-font-size1) * 1.5);
+  min-width: calc(var(--jp-ui-font-size1) * 1.5);
+  background-repeat: no-repeat;
+  background-size: cover;
+  padding: 0;
+}
+
+.jp-GraphQL-URL button.jp-GraphQL-socket-connecting,
+.jp-GraphQL-URL button.jp-GraphQL-socket-disconnecting,
+.jp-GraphQL-URL button.jp-GraphQL-socket-reconnecting {
+  opacity: 0.5;
+  transition: all 1s ease-in-out;
+  transition-delay: 250ms;
+}
+
+.jp-GraphQL-URL button.jp-GraphQL-socket-connected,
+.jp-GraphQL-URL button.jp-GraphQL-socket-disconnected,
+.jp-GraphQL-URL button.jp-GraphQL-socket-reconnected {
+  opacity: 1;
+  transition: all 1s ease-in-out;
+  transition-delay: 250ms;
+}
+.jp-GraphQL-URL button.jp-GraphQL-socket-error {
+  opacity: 1;
+  transition: all 1 ease-in-out;
+  transition-delay: 250ms;
+}
+
 /* schema/editor */
 .jp-GraphQL-Schema,
 .jp-GraphQL-Editor {

@@ -221,6 +221,8 @@ export namespace GraphQLDocumentWidget {
     private _manager: C.IGraphQLManager;
     private _subscriptions: SubscriptionClient;
     private _subscribed = false;
+    private _debounce: any;
+    private _socketStatus = '';
 
     get url() {
       return this._url;
@@ -236,6 +238,12 @@ export namespace GraphQLDocumentWidget {
       this.stateChanged.emit(void 0);
     }
 
+    makeSubscriptionClient() {
+      const client = new SubscriptionClient(this.wsUrl, {reconnect: true});
+      SUB_EVENTS.map((e) => client.on(e, () => this.socketStatus = e));
+      return client;
+    }
+
     async fetchSchema(url: string) {
       let r = await fetch(url, {
         method: 'POST',
@@ -246,15 +254,9 @@ export namespace GraphQLDocumentWidget {
       let response = await r.json();
 
       this._introspection = response;
-      this.schema = graphql.buildClientSchema(response.data);
-      this._subscriptions = new SubscriptionClient(this.wsUrl, {reconnect: true});
-      console.log('subs', this._subscriptions);
+      this._subscriptions = this.makeSubscriptionClient();
 
-      SUB_EVENTS.map((e) => {
-        this._subscriptions.on(e, () => {
-          console.log(e, this);
-        });
-      });
+      this.schema = graphql.buildClientSchema(response.data);
     }
 
     get wsUrl() {
@@ -265,7 +267,13 @@ export namespace GraphQLDocumentWidget {
       return this._subscriptions;
     }
 
-    private _debounce: any;
+    get socketStatus() {
+      return this._socketStatus;
+    }
+    set socketStatus(socketStatus) {
+      this._socketStatus = socketStatus;
+      this.stateChanged.emit(void 0);
+    }
 
     async fetchQuery(query: string) {
       if(this._debounce) {
@@ -273,7 +281,6 @@ export namespace GraphQLDocumentWidget {
       }
 
       this._debounce = setTimeout(async () => {
-        this.requestStarted = new Date();
         let r = await fetch(this.url, {
           method: 'POST',
           headers,
@@ -283,7 +290,6 @@ export namespace GraphQLDocumentWidget {
         if(!this._subscribed) {
           this.results = results['data'];
         }
-        this.requestCompleted = new Date();
         this._debounce = null;
       }, 200);
     }
@@ -294,6 +300,7 @@ export namespace GraphQLDocumentWidget {
 
     set results(results) {
       this._results = results;
+      this.requestCompleted = new Date();
       this.stateChanged.emit(void 0);
     }
 
@@ -312,25 +319,50 @@ export namespace GraphQLDocumentWidget {
     get graphql() {
       return this._graphql;
     }
-    set graphql(graphql) {
-      this._graphql = graphql;
-      this.stateChanged.emit(void 0);
-      if (graphql.indexOf('subscription') > -1) {
-        this._subscriptions.unsubscribeAll();
-        this._subscribed = false;
-        this._subscriptions.request({
-          query: graphql
-        }).subscribe({
-          next: (value) => {
-            this._subscribed = true;
-            this.results = value['data']
-          }
-        });
+    set graphql(rawGraphql) {
+      let node: graphql.DocumentNode;
+
+      try {
+        node = graphql.parse(rawGraphql);
+      } catch {
         return;
-      } else if (this.url && graphql) {
-        this._subscribed = false;
-        this.fetchQuery(this.graphql);
       }
+
+      this._graphql = rawGraphql;
+
+      this.requestStarted = new Date();
+
+      if (hasSubscriptionOperation(node)) {
+        this.handleSubscription();
+      } else if (this.url && this._graphql) {
+        this._subscribed = false;
+        this.fetchQuery(this._graphql);
+      }
+    }
+
+    get subscribed() {
+      return this._subscribed;
+    }
+
+    handleSubscription() {
+      this._subscriptions.unsubscribeAll();
+      this._subscribed = false;
+      this._subscriptions.request({
+        query: this._graphql
+      }).subscribe({
+        next: (value: any) => {
+          this._subscribed = true;
+          this.results = value['data']
+        }
+      });
+    }
+
+    restartClient() {
+      let s = this._subscriptions;
+      s.unsubscribeAll();
+      s.close();
+
+      this._subscriptions = this.makeSubscriptionClient();
     }
 
     get requestStarted() {
@@ -347,12 +379,14 @@ export namespace GraphQLDocumentWidget {
     }
     set requestCompleted(requestCompleted) {
       this._requestCompleted = requestCompleted;
-      this._requestDuration = this._requestCompleted.getTime() - this._requestStarted.getTime();
+      if (this._requestStarted) {
+        this._requestDuration = this._requestCompleted.getTime() - this._requestStarted.getTime();
+      }
       this.stateChanged.emit(void 0);
     }
 
     get requestDuration() {
-      return this._requestDuration ? this._requestDuration : 0;
+      return !this._subscribed && this._requestDuration ? this._requestDuration : 0;
     }
 
     get manager() {
@@ -373,3 +407,17 @@ export namespace GraphQLDocumentWidget {
     }
   }
 }
+
+
+const hasSubscriptionOperation = (queryDoc: graphql.DocumentNode) => {
+  for (let definition of queryDoc.definitions) {
+    if (definition.kind === 'OperationDefinition') {
+      const operation = definition.operation;
+      if (operation === 'subscription') {
+        return true;
+      }
+    }
+  }
+
+  return false;
+};
