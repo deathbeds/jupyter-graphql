@@ -3,6 +3,7 @@ import {VDomModel} from '@jupyterlab/apputils';
 import {PageConfig} from '@jupyterlab/coreutils';
 import {CommandRegistry} from '@phosphor/commands';
 import * as graphql from 'graphql';
+import {SubscriptionClient} from 'subscriptions-transport-ws';
 
 import {
   ABCWidgetFactory,
@@ -12,6 +13,15 @@ import {
 } from '@jupyterlab/docregistry';
 
 const DEFAULT_GRAPHQL_URL = `${PageConfig.getBaseUrl()}graphql`;
+const SUB_EVENTS = [
+  'connected',
+  'connecting',
+  'disconnecting',
+  'disconnected',
+  'reconnecting',
+  'reconnected',
+  'error'
+];
 
 import {Widget, SplitPanel, SplitLayout} from '@phosphor/widgets';
 
@@ -209,6 +219,8 @@ export namespace GraphQLDocumentWidget {
     private _requestCompleted: Date;
     private _requestDuration: number;
     private _manager: C.IGraphQLManager;
+    private _subscriptions: SubscriptionClient;
+    private _subscribed = false;
 
     get url() {
       return this._url;
@@ -235,6 +247,22 @@ export namespace GraphQLDocumentWidget {
 
       this._introspection = response;
       this.schema = graphql.buildClientSchema(response.data);
+      this._subscriptions = new SubscriptionClient(this.wsUrl, {reconnect: true});
+      console.log('subs', this._subscriptions);
+
+      SUB_EVENTS.map((e) => {
+        this._subscriptions.on(e, () => {
+          console.log(e, this);
+        });
+      });
+    }
+
+    get wsUrl() {
+      return this.url.replace(/^http/, 'ws') + '/subscriptions';
+    }
+
+    get subscriptions() {
+      return this._subscriptions;
     }
 
     private _debounce: any;
@@ -251,7 +279,10 @@ export namespace GraphQLDocumentWidget {
           headers,
           body: JSON.stringify({query}),
         });
-        this.results = (await r.json())['data'];
+        let results = await r.json();
+        if(!this._subscribed) {
+          this.results = results['data'];
+        }
         this.requestCompleted = new Date();
         this._debounce = null;
       }, 200);
@@ -284,7 +315,20 @@ export namespace GraphQLDocumentWidget {
     set graphql(graphql) {
       this._graphql = graphql;
       this.stateChanged.emit(void 0);
-      if (this.url && graphql) {
+      if (graphql.indexOf('subscription') > -1) {
+        this._subscriptions.unsubscribeAll();
+        this._subscribed = false;
+        this._subscriptions.request({
+          query: graphql
+        }).subscribe({
+          next: (value) => {
+            this._subscribed = true;
+            this.results = value['data']
+          }
+        });
+        return;
+      } else if (this.url && graphql) {
+        this._subscribed = false;
         this.fetchQuery(this.graphql);
       }
     }

@@ -6,7 +6,8 @@
   "description": "GraphQL Syntax Highlighting and Exploration for JupyterLab",
   "dependencies": {
     "codemirror-graphql": "^0.8.3",
-    "graphql": "*"
+    "graphql": "*",
+    "subscriptions-transport-ws": "^0.9.16"
   },
   "devDependencies": {
     "@jupyterlab/application": "^0.19.1",
