@@ -109,6 +109,7 @@
 }
 
 .jp-GraphQL-Editor .cm-atom:hover,
+.jp-GraphQL-Editor .cm-attribute:hover,
 .jp-GraphQL-Editor .cm-property:hover {
   text-decoration: underline;
 }
