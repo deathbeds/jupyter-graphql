@@ -6,14 +6,14 @@ import {CommandRegistry} from '@phosphor/commands';
 const DEFAULT_GRAPHQL_URL = `${PageConfig.getBaseUrl()}graphql`;
 
 import * as C from '..';
-import {GraphQLDocumentWidget} from '../renderer';
+import {GraphQLModel} from '../models';
 
 const h = React.createElement;
 
-export class GraphQLURL extends VDomRenderer<GraphQLDocumentWidget.Model> {
+export class GraphQLURL extends VDomRenderer<GraphQLModel> {
   private _commands: CommandRegistry;
 
-  constructor(model: GraphQLDocumentWidget.Model, commands: CommandRegistry) {
+  constructor(model: GraphQLModel, commands: CommandRegistry) {
     super();
     this._commands = commands;
     this.model = model;

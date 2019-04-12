@@ -7,10 +7,13 @@ import {InstanceTracker, MainAreaWidget} from '@jupyterlab/apputils';
 
 import {IDocumentWidget} from '@jupyterlab/docregistry';
 
-import {GraphQLFactory, GraphQLEditor} from './renderer';
+import {GraphQLManager} from './manager';
+
+import {GraphQLFactory} from './factory';
+
+import {GraphQLEditor} from './renderers/editor';
 import {GraphQLSchema} from './renderers/schema';
 import {GraphQLDocs} from './renderers/docs';
-import {GraphQLManager} from './manager';
 
 import {PLUGIN_ID as id, FACTORY_GRAPHQL, TYPES, CMD, CSS, IGraphQLManager} from '.';
 

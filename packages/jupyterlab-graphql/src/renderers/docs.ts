@@ -4,7 +4,7 @@ import {VDomRenderer} from '@jupyterlab/apputils';
 import * as graphql from 'graphql';
 
 import * as C from '..';
-import {GraphQLDocumentWidget} from '../renderer';
+import {GraphQLModel} from '../models';
 
 const h = React.createElement;
 
@@ -12,8 +12,8 @@ interface IFieldMap {
   [key: string]: graphql.GraphQLNamedType;
 }
 
-export class GraphQLDocs extends VDomRenderer<GraphQLDocumentWidget.Model> {
-  constructor(model: GraphQLDocumentWidget.Model) {
+export class GraphQLDocs extends VDomRenderer<GraphQLModel> {
+  constructor(model: GraphQLModel) {
     super();
     this.model = model;
     this.addClass(C.CSS.DOCS);

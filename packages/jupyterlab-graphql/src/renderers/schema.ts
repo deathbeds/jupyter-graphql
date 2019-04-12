@@ -4,13 +4,13 @@ import {Widget} from '@phosphor/widgets';
 import * as graphql from 'graphql';
 
 import * as C from '..';
-import {GraphQLDocumentWidget} from '../renderer';
+import {GraphQLModel} from '../models';
 
 export class GraphQLSchema extends Widget {
-  private _model: GraphQLDocumentWidget.Model;
+  private _model: GraphQLModel;
   private _editor: CodeMirror.Editor;
 
-  constructor(model: GraphQLDocumentWidget.Model) {
+  constructor(model: GraphQLModel) {
     super();
     this._model = model;
     this.addClass(C.CSS.SCHEMA);
