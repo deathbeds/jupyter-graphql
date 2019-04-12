@@ -4,6 +4,7 @@ export const PLUGIN_NS = '@deathbeds/jupyterlab-graphql';
 export const PLUGIN_ID = `${PLUGIN_NS}:plugin`;
 export const MIME_ID_TMPL = `${PLUGIN_NS}:mime:`;
 
+// https://graphql.org/learn/serving-over-http/#post-request
 export const MIME_GRAPHQL = 'application/graphql';
 export const FACTORY_GRAPHQL = 'GraphQLExplorer';
 
